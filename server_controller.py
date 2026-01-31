@@ -3,15 +3,29 @@ import sys
 import threading
 from datetime import datetime
 import pathlib
+from os import path
+import re
 
 #store the log and server binary location
-LOG_FILE = f"{pathlib.Path.home()}/logs/server.log"
+LOG_FOLDER = f"{pathlib.Path.home()}/logs/"
 SERVER_CMD = [f"{pathlib.Path.home()}/server_versions/1453/TerrariaServer.bin.x86_64"]  # change if needed
 
-#get the timestamp
-def timestamp():
-    return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+#add the timestamp to the line
+def timestamp(line):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    return f"[{timestamp}] {line}"
 
+#write to the chat file
+def write_chat(line):
+    with open(path.join(LOG_FOLDER, "chat.log"), "a", buffering=1) as logfile:
+        logfile.write(line  + "\n")
+        logfile.flush()
+
+#write to the other file
+def write_other(line):
+    with open(path.join(LOG_FOLDER, "other.log"), "a", buffering=1) as logfile:
+        logfile.write(line  + "\n")
+        logfile.flush()
 
 #placeholder automation logic
 def handle_line(line, proc):
@@ -23,22 +37,26 @@ def handle_line(line, proc):
         proc.stdin.flush()
 
 
-def read_output(proc, logfile):
+def read_output(proc):
     #get stdout
     for raw in proc.stdout:
+        #clean up the line
         line = raw.rstrip("\n")
 
         #timestamp the stdout line
-        stamped = f"[{timestamp()}] {line}"
+        stamped = timestamp(line)
 
         # print to console
         print(stamped)
 
-        # write to log
-        logfile.write(stamped + "\n")
-        logfile.flush()
+        # Match anything with <...> in it
+        chat_regex = re.compile(r'^<[^<>]+>')
 
-        handle_line(line, proc)
+        #check to save the line to chat or other log
+        if chat_regex.search(line):
+            write_chat(stamped)
+        else:
+            write_other(stamped)
 
 
 #read the keyboard input and send it
@@ -49,24 +67,22 @@ def read_input(proc):
 
 
 def main():
-    #open the log file
-    with open(LOG_FILE, "a", buffering=1) as logfile:
-        #start the server
-        proc = subprocess.Popen(
-            SERVER_CMD,
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            text=True,
-            bufsize=1
-        )
+    #start the server
+    proc = subprocess.Popen(
+        SERVER_CMD,
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        text=True,
+        bufsize=1
+    )
 
-        #start controlling the stdin and stdout of the server
-        threading.Thread(target=read_output, args=(proc, logfile), daemon=True).start()
-        threading.Thread(target=read_input, args=(proc,), daemon=True).start()
+    #start controlling the stdin and stdout of the server
+    threading.Thread(target=read_output, args=(proc,), daemon=True).start()
+    threading.Thread(target=read_input, args=(proc,), daemon=True).start()
 
-        #wait for the server to stop before stopping the script
-        proc.wait()
+    #wait for the server to stop before stopping the script
+    proc.wait()
 
 
 if __name__ == "__main__":
