@@ -7,9 +7,9 @@ import subprocess
 from os import path
 from datetime import datetime
 
-#store the log and server binary location
+#store the log and server binary location with args
 LOG_FOLDER = f"{pathlib.Path.home()}/logs/"
-SERVER_CMD = [f"{pathlib.Path.home()}/server_versions/1453/TerrariaServer.bin.x86_64"]  # change if needed
+SERVER_CMD = sys.argv[1:]
 
 #regex filters (ChatGPT wrote them cause I'll never understand regex)
 # Match anything with <...> in it
@@ -110,7 +110,7 @@ def read_input(proc):
 
 
 def main():
-    #start the server
+    #start the server with the provided args
     proc = subprocess.Popen(
         SERVER_CMD,
         stdin=subprocess.PIPE,
