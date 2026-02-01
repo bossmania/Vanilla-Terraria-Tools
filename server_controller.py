@@ -1,32 +1,69 @@
-import subprocess
-import sys
-import threading
-from datetime import datetime
-import pathlib
-from os import path
 import re
 import time
+import sys
+import pathlib
+import threading
+import subprocess
+from os import path
+from datetime import datetime
 
 #store the log and server binary location
 LOG_FOLDER = f"{pathlib.Path.home()}/logs/"
 SERVER_CMD = [f"{pathlib.Path.home()}/server_versions/1453/TerrariaServer.bin.x86_64"]  # change if needed
 
-#regex filters
+#regex filters (ChatGPT wrote them cause I'll never understand regex)
 # Match anything with <...> in it
 chat_regex = re.compile(r'^<[^<>]+>')
 #match anything with a (IP:Port)
 IP_regex = re.compile(r'\(\b\d{1,3}(?:\.\d{1,3}){3}:\d{1,5}\b\)')
+#filter for only the username and IP
+user_IP_regex = re.compile(r':?\s*([^\s(]+)\s*\((\d{1,3}(?:\.\d{1,3}){3}):\d{1,5}\)')
 
 #add the timestamp to the line
 def timestamp(line):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     return f"[{timestamp}] {line}"
 
-#write to the a log file file
+#format the line to be "username [IP]"
+def format_user_ip(line):
+    #filter the line and check if it's valid 
+    result = user_IP_regex.search(line)
+    if not result:
+        return None
+    
+    #format the results
+    username, ip = result.groups()
+    return f"{username} [{ip}]"
+
+#write to the a log file
 def write_log(line, log):
     with open(path.join(LOG_FOLDER, log), "a", buffering=1) as logfile:
         logfile.write(line  + "\n")
         logfile.flush()
+
+#save the player to the player log if needed
+def write_player(line, log):
+    with open(path.join(LOG_FOLDER, log), "a", buffering=1) as logfile:
+        #format the line and check if they're not in the log
+        formated_player = format_user_ip(line)
+        if not player_in_log(formated_player, log):
+
+            #write to the log
+            logfile.write(formated_player  + "\n")
+            logfile.flush()
+
+#check if the player is already in the log to prevent spam 
+def player_in_log(person, log):
+    with open(path.join(LOG_FOLDER, log), "r", buffering=1) as logfile:
+        #get the players from the file
+        players = logfile.read().splitlines()
+        for player in players:
+
+            #check if the player is in the list
+            if person in player:
+                return True
+
+        return False
 
 #check the amount of players every 7 seconds
 def check_players(proc):
@@ -60,7 +97,7 @@ def read_output(proc):
         if chat_regex.search(line):
             write_log(stamped, "chat.log")
         elif IP_regex.search(line):
-            write_log(line, "player.log")
+            write_player(line, "player.log")
         else:
             write_log(stamped, "other.log")
 
