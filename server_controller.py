@@ -12,8 +12,8 @@ LOG_FOLDER = f"{pathlib.Path.home()}/logs/"
 SERVER_CMD = sys.argv[1:]
 
 #regex filters (ChatGPT wrote them cause I'll never understand regex)
-# Match anything with <...> in it
-chat_regex = re.compile(r'^<[^<>]+>')
+# Match anything with <...> or : <...> in it
+chat_regex = re.compile(r'^:?\s*<[^<>]+>')
 #match anything with a (IP:Port)
 IP_regex = re.compile(r'\(\b\d{1,3}(?:\.\d{1,3}){3}:\d{1,5}\b\)')
 #filter for only the username and IP
@@ -110,7 +110,7 @@ def read_input(proc):
 
 
 def main():
-    #start the server with the provided args
+    #start the server
     proc = subprocess.Popen(
         SERVER_CMD,
         stdin=subprocess.PIPE,
