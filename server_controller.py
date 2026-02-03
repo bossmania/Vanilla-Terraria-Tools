@@ -18,6 +18,8 @@ chat_regex = re.compile(r'^:?\s*<[^<>]+>')
 IP_regex = re.compile(r'\(\b\d{1,3}(?:\.\d{1,3}){3}:\d{1,5}\b\)')
 #filter for only the username and IP
 user_IP_regex = re.compile(r':?\s*([^\s(]+)\s*\((\d{1,3}(?:\.\d{1,3}){3}):\d{1,5}\)')
+#regex for removing everything but the username in the /kick command
+kick_regex = re.compile(r".*/kick\s+")
 
 #add the timestamp to the line
 def timestamp(line):
@@ -72,20 +74,27 @@ def check_players(proc):
         proc.stdin.write("playing\n")
         proc.stdin.flush()
 
-# #placeholder automation logic
-# def handle_line(line, proc):
-#     """
-#     Put your automation logic here
-#     """
-#     if "joined" in line:
-#         proc.stdin.write("say Welcome!\n")
-#         proc.stdin.flush()
+#command handler
+def command_checker(line, proc):
+    #handle /kick command
+    if "/kick" in line:
+        #get the username
+        user = kick_regex.sub("", line)
+        
+        #kick the user and say that they're kicked
+        proc.stdin.write(f"kick {user}\n")
+        proc.stdin.write(f"say Kiced {user} from the server!\n")
+        proc.stdin.flush()
+
 
 def read_output(proc):
     #get stdout
     for raw in proc.stdout:
         #clean up the line
         line = raw.rstrip("\n")
+
+        #check if the line was a command, and execute on it
+        command_checker(line, proc)
 
         #timestamp the stdout line
         stamped = timestamp(line)
