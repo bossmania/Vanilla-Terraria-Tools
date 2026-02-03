@@ -10,7 +10,7 @@ from os import path
 import handle_commands
 
 #store the banlist and server binary location with args
-BANLIST = path.join(path.join(pathlib.Path.home(), "banlist.txt"))
+BANLIST = path.join(path.join(pathlib.Path.home(), "admin", "banlist.txt"))
 SERVER_CMD = sys.argv[1:]
 
 #regex filters (ChatGPT wrote them cause I'll never understand regex)
@@ -28,25 +28,26 @@ def check_players(proc):
 
 #command handler
 def command_checker(line, proc):
-    #handle /kick command
-    if "/kick" in line:
-        handle_commands.kick(line, proc)
-    
-    #handle /ban command
-    if "/ban" in line:
-        handle_commands.ban(line, proc, BANLIST)
+    if handle_commands.check_if_allowed(logger.PLAYER_LOG, line):
+        #handle /kick command
+        if "/kick" in line:
+            handle_commands.kick(line, proc)
 
-    #handle /save command
-    if "/save" in line:
-        handle_commands.save(proc)
-        
-    #handle /exit command    
-    if "/exit" in line:
-        handle_commands.exit(proc)
-        
-    #handle /settle command    
-    if "/settle" in line:
-        handle_commands.settle(proc)
+        #handle /ban command
+        if "/ban" in line:
+            handle_commands.ban(line, proc, BANLIST)
+
+        #handle /save command
+        if "/save" in line:
+            handle_commands.save(proc)
+
+        #handle /exit command    
+        if "/exit" in line:
+            handle_commands.exit(proc)
+
+        #handle /settle command    
+        if "/settle" in line:
+            handle_commands.settle(proc)
 
 
 def read_output(proc):
@@ -54,10 +55,6 @@ def read_output(proc):
     for raw in proc.stdout:
         #clean up the line
         line = raw.rstrip("\n")
-
-        #check if the line was a command, and execute on it
-        command_checker(line, proc)
-
         #timestamp the stdout line
         stamped = logger.timestamp(line)
 
@@ -67,6 +64,9 @@ def read_output(proc):
         #check if the line matches a regex filter for the log file to store at
         if chat_regex.search(line):
             logger.write_log(stamped, logger.CHAT_LOG)
+            
+            #check if the line was a command, and execute on it
+            command_checker(line, proc)
         elif IP_regex.search(line):
             logger.write_player(line)
         else:
