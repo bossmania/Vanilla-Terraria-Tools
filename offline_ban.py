@@ -6,6 +6,30 @@ import os
 user_IP_regex = re.compile(r'^(.+?)\s*\[(\d{1,3}(?:\.\d{1,3}){3})\]$')
 IPs = []
 
+#func to check if the player has even joined the server before
+def check_if_ever_joined(player_file, banned_player):
+    found = False
+
+    #open the player list and get all of the players
+    with open(player_file, "r", buffering=1) as player_log:
+        players = player_log.read().splitlines()
+
+        for player in players:
+            #get the username & IP for that player
+            results = user_IP_regex.search(player)
+            if not results:
+                raise Exception("The player file is not formatted properly!")
+            
+            #stop when founed the player in the list
+            user, IP = results.groups()
+            if user == banned_player:
+                found = True
+                return True
+    
+    #inform that the player can't be found
+    if not found:
+        return False
+
 def get_ips(player_file, banned_player):
     #open the player list and get all of the players
     with open(player_file, "r", buffering=1) as player_log:
@@ -49,23 +73,37 @@ def update_ban_list(ban_file, banned_player):
             ban_log.write(output + "\n")
             ban_log.flush()
     
-    #infrom about the banning
+    #return the banning response
     if len(IPs) > 0:
-        print(f"Sucessfully banned {banned_player}!")
+        return f"Sucessfully banned {banned_player}!"
     else:
-        print(f"{banned_player} is already banned from the server!")
+        return f"{banned_player} is already banned from the server!"
 
 #func to easily ban someone
 def ban_player(player_file, ban_file, banned_player):
-    get_ips(player_file, banned_player)
-    remove_banned_IPs(ban_file, banned_player)
-    update_ban_list(ban_file, banned_player)
+    response = ""
 
-if __name__ == "__main__":
+    #checked if the player has joined the server before
+    joined = check_if_ever_joined(player_file, banned_player)
+    if not joined:
+        response = f"{banned_player} has never joined the server before!"
+    else:
+        #ban the player
+        get_ips(player_file, banned_player)
+        remove_banned_IPs(ban_file, banned_player)
+        response = update_ban_list(ban_file, banned_player)
+
+    #show and return the response
+    print(response)
+    return response
+
+def main():
     #get the arguments
     player_file = sys.argv[1]
     ban_file = sys.argv[2]
     banned_player = sys.argv[3]
 
-    #ban the player
     ban_player(player_file, ban_file, banned_player)
+
+if __name__ == "__main__":
+    main()
