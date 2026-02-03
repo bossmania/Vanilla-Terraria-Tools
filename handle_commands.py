@@ -30,3 +30,20 @@ def ban(line, proc, BANLIST):
     proc.stdin.write(f"kick {user}\n")
     proc.stdin.write(f"say Banned {user} from the server!\n")
     proc.stdin.flush()
+
+def save(proc):
+    #save the world
+    proc.stdin.write(f"save\n")
+    proc.stdin.write(f"say Sucessfully saved the world!\n")
+    proc.stdin.flush()
+
+def exit(proc):
+    #exit the server
+    proc.stdin.write(f"exit\n")
+    proc.stdin.flush()
+
+def settle(proc):
+    #settle all of the world in the world
+    proc.stdin.write(f"settle\n")
+    proc.stdin.write(f"say Sucessfully settled all of the water in the world!\n")
+    proc.stdin.flush()

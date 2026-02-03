@@ -36,6 +36,18 @@ def command_checker(line, proc):
     if "/ban" in line:
         handle_commands.ban(line, proc, BANLIST)
 
+    #handle /save command
+    if "/save" in line:
+        handle_commands.save(proc)
+        
+    #handle /exit command    
+    if "/exit" in line:
+        handle_commands.exit(proc)
+        
+    #handle /settle command    
+    if "/settle" in line:
+        handle_commands.settle(proc)
+
 
 def read_output(proc):
     #get stdout
