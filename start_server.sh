@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 #make it fail on error
 set -eu 
 
