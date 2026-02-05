@@ -6,11 +6,11 @@ import pathlib
 import threading
 import subprocess
 import offline_ban
+import path_grabber
 from os import path
 import handle_commands
 
-#store the banlist and server binary location with args
-BANLIST = path.join(path.join(pathlib.Path.home(), "admin", "banlist.txt"))
+#store the server binary location with args
 SERVER_CMD = sys.argv[1:]
 
 #regex filters (ChatGPT wrote them cause I'll never understand regex)
@@ -28,14 +28,14 @@ def check_players(proc):
 
 #command handler
 def command_checker(line, proc):
-    if handle_commands.check_if_allowed(logger.PLAYER_LOG, line):
+    if handle_commands.check_if_allowed(path_grabber.PLAYER_LOG, line):
         #handle /kick command
         if "/kick" in line:
             handle_commands.kick(line, proc)
 
         #handle /ban command
         if "/ban" in line:
-            handle_commands.ban(line, proc, BANLIST)
+            handle_commands.ban(line, proc, path_grabber.BANLIST)
 
         #handle /save command
         if "/save" in line:
@@ -63,14 +63,14 @@ def read_output(proc):
 
         #check if the line matches a regex filter for the log file to store at
         if chat_regex.search(line):
-            logger.write_log(stamped, logger.CHAT_LOG)
+            logger.write_log(stamped, path_grabber.CHAT_LOG)
             
             #check if the line was a command, and execute on it
             command_checker(line, proc)
         elif IP_regex.search(line):
             logger.write_player(line)
         else:
-            logger.write_log(stamped, logger.OTHER_LOG)
+            logger.write_log(stamped, path_grabber.OTHER_LOG)
 
 
 #read the keyboard input and send it
@@ -81,6 +81,8 @@ def read_input(proc):
 
 
 def main():
+    path_grabber.update_paths()
+
     #start the server
     proc = subprocess.Popen(
         SERVER_CMD,
