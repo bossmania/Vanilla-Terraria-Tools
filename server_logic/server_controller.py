@@ -7,6 +7,7 @@ import threading
 import subprocess
 import offline_ban
 import path_grabber
+import world_backup
 from os import path
 import handle_commands
 
@@ -26,6 +27,12 @@ def check_players(proc):
         proc.stdin.write("playing\n")
         proc.stdin.flush()
 
+#func to auto backup the world every 15 mins 
+def auto_backup_world():
+    while True:
+        time.sleep(60*15)
+        world_backup.backup_world()
+
 #command handler
 def command_checker(line, proc):
     if handle_commands.check_if_allowed(path_grabber.PLAYER_LOG, line):
@@ -36,6 +43,9 @@ def command_checker(line, proc):
         #handle /ban command
         if "/ban" in line:
             handle_commands.ban(line, proc, path_grabber.BANLIST)
+
+        if "/backup" in line:
+            handle_commands.backup(proc)
 
         #handle /save command
         if "/save" in line:
@@ -97,6 +107,7 @@ def main():
     threading.Thread(target=read_output, args=(proc,), daemon=True).start()
     threading.Thread(target=read_input, args=(proc,), daemon=True).start()
     threading.Thread(target=check_players, args=(proc,), daemon=True).start()
+    threading.Thread(target=auto_backup_world, daemon=True).start()
 
     #wait for the server to stop before stopping the script
     proc.wait()
