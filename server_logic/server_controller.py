@@ -24,7 +24,7 @@ def check_players(proc):
 #func to auto backup the world every 15 mins 
 def auto_backup_world():
     while True:
-        time.sleep(60*15)
+        time.sleep(envs.BACKUP_TIMER)
         world_controller.backup_world()
 
 #command handler

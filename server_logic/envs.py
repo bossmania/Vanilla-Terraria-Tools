@@ -3,7 +3,7 @@ import pathlib
 from os import path
 
 #prepare to get the paths
-PATH_FILE = path.join(pathlib.Path.home(), "paths.txt")
+PATH_FILE = path.join(pathlib.Path.home(), "admin", "paths.txt")
 BANLIST = ""
 APPROVED_IP_FILE = ""
 PLAYER_LOG = ""
@@ -36,6 +36,9 @@ User_IP_log_regex = re.compile(r'^(.+?)\s*\[(\d{1,3}(?:\.\d{1,3}){3})\]$')
 
 #tell the server to restart
 RESTARTING = False
+
+#how often to auto backup the world
+BACKUP_TIMER = 60*15
 
 def update_paths():
     #open the path files
