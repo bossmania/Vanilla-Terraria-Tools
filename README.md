@@ -27,9 +27,9 @@ This a Terraria vanilla server wrapper where it can add additional tools to help
 	- EX: `./start_server.sh 1450` to start the server on version 1.4.5.0.
 5. Create the world that you want.
 6. Stop the server via either typing in `exit`, or pressing `CTRL + C`.
-7. modify the config file for the server at `~/admin/config.txt`. Use the following as a template on what to add: *Replace <WORLD_NAME> with the name of the actual world*
+7. modify the config file for the server at `~/admin/config.txt`. Use the following as a template on what to add: *Replace <USERNAME> with your linux's username, and <WORLD_NAME> with the name of the actual world*
 ```toml
-world=~/.local/share/Terraria/Worlds/<WORLD_NAME>.wld
+world=/home/<USERNAME>/worlds/<WORLD_NAME>.wld
 maxplayers=16
 port=7777
 password=
