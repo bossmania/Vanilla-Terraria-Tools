@@ -6,6 +6,7 @@ mkdir worlds_backup tools config admin
 mkdir -p ~/.local/share/Terraria/Worlds/
 ln -s ~/.local/share/Terraria/Worlds/ worlds
 touch ~/admin/{banlist.txt,ApprovedIPs.txt}
+touch ~/paths.txt
 
 #auto create a folder that will store all of the paths for the server to function properly
 cat <<EOF > "~/paths.txt"
