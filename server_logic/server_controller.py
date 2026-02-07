@@ -92,24 +92,32 @@ def read_input(proc):
 def main():
     envs.update_paths()
 
-    #start the server
-    proc = subprocess.Popen(
-        SERVER_CMD,
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True,
-        bufsize=1
-    )
+    #always restart the server unless told not to
+    while True:
+        envs.RESTARTING = False
 
-    #start controlling the stdin and stdout of the server
-    threading.Thread(target=read_output, args=(proc,), daemon=True).start()
-    threading.Thread(target=read_input, args=(proc,), daemon=True).start()
-    threading.Thread(target=check_players, args=(proc,), daemon=True).start()
-    threading.Thread(target=auto_backup_world, daemon=True).start()
+        #start the server
+        proc = subprocess.Popen(
+            SERVER_CMD,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1
+        )
 
-    #wait for the server to stop before stopping the script
-    proc.wait()
+        #start controlling the stdin and stdout of the server
+        threading.Thread(target=read_output, args=(proc,), daemon=True).start()
+        threading.Thread(target=read_input, args=(proc,), daemon=True).start()
+        threading.Thread(target=check_players, args=(proc,), daemon=True).start()
+        threading.Thread(target=auto_backup_world, daemon=True).start()
+
+        #wait for the server to stop before stopping the script
+        code = proc.wait()
+
+        #don't restart the sever if it sucessfully ended and it isn't set to restart
+        if code == 0 and envs.RESTARTING == False:
+            break
 
 
 if __name__ == "__main__":

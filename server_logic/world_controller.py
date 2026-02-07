@@ -53,6 +53,9 @@ def restore_backup(index, proc):
         #over write them
         shutil.copy2(new_file, old_file)
 
+    #tell the server to restart
+    envs.RESTARTING = True
+
     #exit the server without saving
     proc.stdin.write("say Rolling back the server to the backup now\n")
     proc.stdin.write("exit-nosave\n")
