@@ -5,7 +5,7 @@ import threading
 import offline_ban
 from os import path
 import path_grabber
-import world_backup
+import world_controller
 
 #regex filters (ChatGPT wrote them cause I'll never understand regex)
 #regex for removing everything but the username in the /kick command
@@ -74,9 +74,17 @@ def ban(line, proc, BANLIST):
 
 def backup(proc):
     #backup the world and say when it was backed
-    timestamp = world_backup.backup_world()
+    timestamp = world_controller.backup_world()
     proc.stdin.write(f"say Sucessfully backup the world @ {timestamp} UTC!\n")
     proc.stdin.flush()
+
+def restore(line, proc):
+    #get the list of backups and display them
+    backups = world_controller.get_restore_points(5)
+    for backup in backups:
+        proc.stdin.write(f"say {backup}\n")
+    proc.stdin.flush()
+        
 
 def save(proc):
     #save the world

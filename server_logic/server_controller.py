@@ -7,7 +7,7 @@ import threading
 import subprocess
 import offline_ban
 import path_grabber
-import world_backup
+import world_controller
 from os import path
 import handle_commands
 
@@ -31,7 +31,7 @@ def check_players(proc):
 def auto_backup_world():
     while True:
         time.sleep(60*15)
-        world_backup.backup_world()
+        world_controller.backup_world()
 
 #command handler
 def command_checker(line, proc):
@@ -44,8 +44,13 @@ def command_checker(line, proc):
         if "/ban" in line:
             handle_commands.ban(line, proc, path_grabber.BANLIST)
 
+        #handle /backup command
         if "/backup" in line:
             handle_commands.backup(proc)
+
+        #handle /restore command
+        if "/restore" in line:
+            handle_commands.restore(line, proc)
 
         #handle /save command
         if "/save" in line:
