@@ -9,6 +9,7 @@ PLAYER_LOG = ""
 CHAT_LOG = ""
 OTHER_LOG = ""
 WORLD_BACKUP_DIR = ""
+WORLD_SAVE = ""
 
 def update_paths():
     #open the path files
@@ -21,6 +22,7 @@ def update_paths():
         global PLAYER_LOG
         global CHAT_LOG
         global OTHER_LOG
+        global WORLD_SAVE
         global WORLD_BACKUP_DIR
 
         for path in paths:
@@ -41,5 +43,7 @@ def update_paths():
                     BANLIST = values[1]
                 case "approved_IPs":
                     APPROVED_IP_FILE = values[1]
+                case "world_save":
+                    WORLD_SAVE = values[1]
                 case "world_backup":
                     WORLD_BACKUP_DIR = values[1]

@@ -14,5 +14,6 @@ player_logs=~/logs/player.log
 other_logs=~/logs/other.log
 banlist=~/admin/banlist.txt
 approved_IPs=~/admin/ApprovedIPs.txt
+world_save=~/.local/share/Terraria/Worlds
 world_backup=~/world_backups
 EOF

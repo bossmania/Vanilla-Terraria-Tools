@@ -1,12 +1,10 @@
 import os
 import sys
+import time
 import shutil
 import pathlib 
 import path_grabber
 from datetime import datetime
-
-#get the folder where the worlds are saved at
-WORLDS = os.path.join(pathlib.Path.home(), ".local/share/Terraria/Worlds")
 
 #reformat the timestamp to make it easier to read
 def timestamp_cleaner(timestamp):
@@ -21,19 +19,42 @@ def backup_world():
     pathlib.Path.mkdir(pathlib.Path(path_grabber.WORLD_BACKUP_DIR), parents=True, exist_ok=True)
 
     # copy recursively, following symlinks (-L behavior)
-    shutil.copytree(WORLDS, copy_path, symlinks=False)
+    shutil.copytree(path_grabber.WORLD_SAVE, copy_path, symlinks=False)
     
-    #return the timestamp in a better format
-    return timestamp_cleaner(timestamp)
-
-def get_restore_points(amount):
+    #return the timestamp
+    return timestamp
+    
+def get_restore_points(cleanup=True):
     #prep the backup list 
     backups = []
 
     #get the list of backups and add them to the list
     for backup in os.listdir(path_grabber.WORLD_BACKUP_DIR):
-        backups.append(timestamp_cleaner(backup))
+        #clean of the timestamp if needed
+        if (cleanup):
+            backup = timestamp_cleaner(backup)
+        
+        backups.append(backup)
     
-    #sort the backup list in desc order and only show the amount needed 
+    #sort the backup list in desc order and only show 8
     backups.sort(reverse=True)
-    return backups[0:amount]
+    return backups[0:8]
+
+def restore_backup(index, proc):
+    #get the specific backup and the path to it
+    backup = get_restore_points(cleanup=False)[index]
+    backup_folder = os.path.join(path_grabber.WORLD_BACKUP_DIR, backup)
+
+    for file in os.listdir(backup_folder):
+        #get the new and old world files path
+        old_file = os.path.join(path_grabber.WORLD_SAVE, file)
+        new_file = os.path.join(backup_folder, file)
+
+        #over write them
+        shutil.copy2(new_file, old_file)
+
+    #exit the server without saving
+    proc.stdin.write("say Rolling back the server to the backup now\n")
+    proc.stdin.write("exit-nosave\n")
+    proc.stdin.flush()
+    

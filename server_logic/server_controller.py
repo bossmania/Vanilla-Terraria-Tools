@@ -49,7 +49,7 @@ def command_checker(line, proc):
             handle_commands.backup(proc)
 
         #handle /restore command
-        if "/restore" in line:
+        if "/restore" in line or "/rollback" in line:
             handle_commands.restore(line, proc)
 
         #handle /save command

@@ -6,6 +6,7 @@ import offline_ban
 from os import path
 import path_grabber
 import world_controller
+from datetime import datetime
 
 #regex filters (ChatGPT wrote them cause I'll never understand regex)
 #regex for removing everything but the username in the /kick command
@@ -14,6 +15,8 @@ kick_regex = re.compile(r".*/kick\s+")
 ban_regex = re.compile(r".*/ban\s+")
 #regex to delete everything except for the username
 user_regex = re.compile(r"(?<=<)[^<>]+(?=>)")
+# Match anything with <...> or : <...> in it
+chat_regex = re.compile(r'^:?\s*<[^<>]+>')
 
 #get the users 
 def check_if_allowed(player_file, line):
@@ -74,16 +77,29 @@ def ban(line, proc, BANLIST):
 
 def backup(proc):
     #backup the world and say when it was backed
-    timestamp = world_controller.backup_world()
-    proc.stdin.write(f"say Sucessfully backup the world @ {timestamp} UTC!\n")
+    timestamp = world_controller.timestamp_cleaner(world_controller.backup_world())
+    proc.stdin.write(f"say Sucessfully backup the world @ {timestamp} {datetime.now().astimezone().strftime("%Z")}!\n")
     proc.stdin.flush()
 
 def restore(line, proc):
-    #get the list of backups and display them
-    backups = world_controller.get_restore_points(5)
-    for backup in backups:
-        proc.stdin.write(f"say {backup}\n")
-    proc.stdin.flush()
+    #delete the username from the command
+    line = chat_regex.sub("", line)[1:]
+    
+    #check if the command has an args
+    args = line.split(" ")
+    print(len(args))
+    if (len(args) > 1):
+        #rollback the world to that point
+        rollback_ver = line.split(" ")[1]
+        world_controller.restore_backup(int(rollback_ver) - 1, proc)
+    else:
+        #get the list of backups
+        backups = world_controller.get_restore_points()
+
+        #display the backups with their index
+        for index, backup in enumerate(backups):
+            proc.stdin.write(f"say {index+1}: {backup}\n")
+        proc.stdin.flush()
         
 
 def save(proc):
