@@ -1,9 +1,9 @@
 import os
 import sys
+import envs
 import time
 import shutil
 import pathlib 
-import path_grabber
 from datetime import datetime
 
 #reformat the timestamp to make it easier to read
@@ -13,13 +13,13 @@ def timestamp_cleaner(timestamp):
 def backup_world():
     # timestamp like: 2026-02-04__14_32_10
     timestamp = datetime.now().strftime("%Y-%m-%d__%H_%M_%S")
-    copy_path = os.path.join(path_grabber.WORLD_BACKUP_DIR, timestamp)
+    copy_path = os.path.join(envs.WORLD_BACKUP_DIR, timestamp)
 
     # ensure backup directory exists
-    pathlib.Path.mkdir(pathlib.Path(path_grabber.WORLD_BACKUP_DIR), parents=True, exist_ok=True)
+    pathlib.Path.mkdir(pathlib.Path(envs.WORLD_BACKUP_DIR), parents=True, exist_ok=True)
 
     # copy recursively, following symlinks (-L behavior)
-    shutil.copytree(path_grabber.WORLD_SAVE, copy_path, symlinks=False)
+    shutil.copytree(envs.WORLD_SAVE, copy_path, symlinks=False)
     
     #return the timestamp
     return timestamp
@@ -29,7 +29,7 @@ def get_restore_points(cleanup=True):
     backups = []
 
     #get the list of backups and add them to the list
-    for backup in os.listdir(path_grabber.WORLD_BACKUP_DIR):
+    for backup in os.listdir(envs.WORLD_BACKUP_DIR):
         #clean of the timestamp if needed
         if (cleanup):
             backup = timestamp_cleaner(backup)
@@ -43,11 +43,11 @@ def get_restore_points(cleanup=True):
 def restore_backup(index, proc):
     #get the specific backup and the path to it
     backup = get_restore_points(cleanup=False)[index]
-    backup_folder = os.path.join(path_grabber.WORLD_BACKUP_DIR, backup)
+    backup_folder = os.path.join(envs.WORLD_BACKUP_DIR, backup)
 
     for file in os.listdir(backup_folder):
         #get the new and old world files path
-        old_file = os.path.join(path_grabber.WORLD_SAVE, file)
+        old_file = os.path.join(envs.WORLD_SAVE, file)
         new_file = os.path.join(backup_folder, file)
 
         #over write them

@@ -1,13 +1,9 @@
 import re
+import envs
 import pathlib
 import subprocess
-import path_grabber
 from os import path
 from datetime import datetime
-
-#regex filters (ChatGPT wrote them cause I'll never understand regex)
-#filter for only the username and IP
-user_IP_regex = re.compile(r':?\s*([^\s(]+)\s*\((\d{1,3}(?:\.\d{1,3}){3}):\d{1,5}\)')
 
 #add the timestamp to the line
 def timestamp(line):
@@ -17,7 +13,7 @@ def timestamp(line):
 #format the line to be "username [IP]"
 def format_user_ip(line):
     #filter the line and check if it's valid 
-    result = user_IP_regex.search(line)
+    result = envs.user_IP_regex.search(line)
     if not result:
         return None
     
@@ -33,7 +29,7 @@ def write_log(line, log):
 
 #save the player to the player log if needed
 def write_player(line):
-    with open(path_grabber.PLAYER_LOG, "a", buffering=1) as logfile:
+    with open(envs.PLAYER_LOG, "a", buffering=1) as logfile:
         #format the line and check if they're not in the log
         formated_player = format_user_ip(line)
         if not player_in_log(formated_player):
@@ -44,7 +40,7 @@ def write_player(line):
 
 #check if the player is already in the log to prevent spam 
 def player_in_log(person):
-    with open(path_grabber.PLAYER_LOG, "r", buffering=1) as logfile:
+    with open(envs.PLAYER_LOG, "r", buffering=1) as logfile:
         #get the players from the file
         players = logfile.read().splitlines()
         for player in players:

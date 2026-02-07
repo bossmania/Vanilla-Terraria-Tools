@@ -1,24 +1,18 @@
 import re
 import sys
+import envs
 import time
 import logger
 import pathlib
 import threading
 import subprocess
 import offline_ban
-import path_grabber
 import world_controller
 from os import path
 import handle_commands
 
 #store the server binary location with args
 SERVER_CMD = sys.argv[1:]
-
-#regex filters (ChatGPT wrote them cause I'll never understand regex)
-# Match anything with <...> or : <...> in it
-chat_regex = re.compile(r'^:?\s*<[^<>]+>')
-#match anything with a (IP:Port)
-IP_regex = re.compile(r'\(\b\d{1,3}(?:\.\d{1,3}){3}:\d{1,5}\b\)')
 
 #check the amount of players every 7 seconds
 def check_players(proc):
@@ -35,14 +29,14 @@ def auto_backup_world():
 
 #command handler
 def command_checker(line, proc):
-    if handle_commands.check_if_allowed(path_grabber.PLAYER_LOG, line):
+    if handle_commands.check_if_allowed(envs.PLAYER_LOG, line):
         #handle /kick command
         if "/kick" in line:
             handle_commands.kick(line, proc)
 
         #handle /ban command
         if "/ban" in line:
-            handle_commands.ban(line, proc, path_grabber.BANLIST)
+            handle_commands.ban(line, proc, envs.BANLIST)
 
         #handle /backup command
         if "/backup" in line:
@@ -77,15 +71,15 @@ def read_output(proc):
         print(stamped)
 
         #check if the line matches a regex filter for the log file to store at
-        if chat_regex.search(line):
-            logger.write_log(stamped, path_grabber.CHAT_LOG)
+        if envs.chat_regex.search(line):
+            logger.write_log(stamped, envs.CHAT_LOG)
             
             #check if the line was a command, and execute on it
             command_checker(line, proc)
-        elif IP_regex.search(line):
+        elif envs.IP_regex.search(line):
             logger.write_player(line)
         else:
-            logger.write_log(stamped, path_grabber.OTHER_LOG)
+            logger.write_log(stamped, envs.OTHER_LOG)
 
 
 #read the keyboard input and send it
@@ -96,7 +90,7 @@ def read_input(proc):
 
 
 def main():
-    path_grabber.update_paths()
+    envs.update_paths()
 
     #start the server
     proc = subprocess.Popen(

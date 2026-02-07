@@ -1,9 +1,9 @@
 import re
-import sys
 import os
+import sys
+import envs
 
-#prepare to get the IPs (regex by ChatGPT)
-user_IP_regex = re.compile(r'^(.+?)\s*\[(\d{1,3}(?:\.\d{1,3}){3})\]$')
+#prepare to get the IPs
 IPs = []
 
 #func to check if the player has even joined the server before
@@ -16,7 +16,7 @@ def check_if_ever_joined(player_file, banned_player):
 
         for player in players:
             #get the username & IP for that player
-            results = user_IP_regex.search(player)
+            results = envs.User_IP_log_regex.search(player)
             if not results:
                 raise Exception("The player file is not formatted properly!")
             
@@ -37,7 +37,7 @@ def get_ips(player_file, banned_player):
 
         for player in players:
             #get the username & IP for that player
-            results = user_IP_regex.search(player)
+            results = envs.User_IP_log_regex.search(player)
             if not results:
                 raise Exception("The player file is not formatted properly!")
             

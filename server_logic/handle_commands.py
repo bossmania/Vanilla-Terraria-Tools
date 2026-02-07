@@ -1,27 +1,17 @@
 import re
+import envs
 import logger
 import pathlib
 import threading
 import offline_ban
 from os import path
-import path_grabber
 import world_controller
 from datetime import datetime
-
-#regex filters (ChatGPT wrote them cause I'll never understand regex)
-#regex for removing everything but the username in the /kick command
-kick_regex = re.compile(r".*/kick\s+")
-#regex for removing everything but the username in the /ban command
-ban_regex = re.compile(r".*/ban\s+")
-#regex to delete everything except for the username
-user_regex = re.compile(r"(?<=<)[^<>]+(?=>)")
-# Match anything with <...> or : <...> in it
-chat_regex = re.compile(r'^:?\s*<[^<>]+>')
 
 #get the users 
 def check_if_allowed(player_file, line):
     #get the user and prep the IP search
-    talked_user = user_regex.search(line).group()
+    talked_user = envs.user_regex.search(line).group()
     IPs = []
     
     #open the player list and get all of the players
@@ -30,7 +20,7 @@ def check_if_allowed(player_file, line):
 
         for player in players:
             #get the username & IP for that player
-            results = offline_ban.user_IP_regex.search(player)
+            results = envs.User_IP_log_regex.search(player)
             if not results:
                 raise Exception("The player file is not formatted properly!")
             
@@ -40,7 +30,7 @@ def check_if_allowed(player_file, line):
                 IPs.append(IP)
 
     #get all of the approved IPs
-    with open(path_grabber.APPROVED_IP_FILE, "r", buffering=1) as IP_log:
+    with open(envs.APPROVED_IP_FILE, "r", buffering=1) as IP_log:
         approved_IPs = IP_log.read().splitlines()
 
         #go through each approved IP, and the IPs match by the chatter
@@ -55,7 +45,7 @@ def check_if_allowed(player_file, line):
 
 def kick(line, proc):
     #get the username
-    user = kick_regex.sub("", line)
+    user = envs.kick_regex.sub("", line)
     
     #kick the user and say that they're kicked
     proc.stdin.write(f"kick {user}\n")
@@ -64,10 +54,10 @@ def kick(line, proc):
 
 def ban(line, proc, BANLIST):
     #get the username
-    user = ban_regex.sub("", line)
+    user = envs.ban_regex.sub("", line)
 
     #banned the player and show it to the chat
-    response = offline_ban.ban_player(path_grabber.PLAYER_LOG, BANLIST, user)
+    response = offline_ban.ban_player(envs.PLAYER_LOG, BANLIST, user)
     print(logger.timestamp(f"FROM OFFLINE_BAN: {response}"))
 
     #kick them from the server
@@ -83,11 +73,10 @@ def backup(proc):
 
 def restore(line, proc):
     #delete the username from the command
-    line = chat_regex.sub("", line)[1:]
+    line = envs.chat_regex.sub("", line)[1:]
     
     #check if the command has an args
     args = line.split(" ")
-    print(len(args))
     if (len(args) > 1):
         #rollback the world to that point
         rollback_ver = line.split(" ")[1]
@@ -110,6 +99,7 @@ def save(proc):
 
 def exit(proc):
     #exit the server
+    proc.stdin.write(f"say Shutting down the world now!\n")
     proc.stdin.write(f"exit\n")
     proc.stdin.flush()
 

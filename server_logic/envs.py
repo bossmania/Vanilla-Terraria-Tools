@@ -1,3 +1,4 @@
+import re
 import pathlib
 from os import path
 
@@ -10,6 +11,29 @@ CHAT_LOG = ""
 OTHER_LOG = ""
 WORLD_BACKUP_DIR = ""
 WORLD_SAVE = ""
+
+#regex filters (ChatGPT wrote them cause I'll never understand regex)
+# Match anything with <...> or : <...> in it
+chat_regex = re.compile(r'^:?\s*<[^<>]+>')
+
+#match anything with a (IP:Port)
+IP_regex = re.compile(r'\(\b\d{1,3}(?:\.\d{1,3}){3}:\d{1,5}\b\)')
+
+#regex for removing everything but the username in the /kick command
+kick_regex = re.compile(r".*/kick\s+")
+
+#regex for removing everything but the username in the /ban command
+ban_regex = re.compile(r".*/ban\s+")
+
+#regex to delete everything except for the username
+user_regex = re.compile(r"(?<=<)[^<>]+(?=>)")
+
+#filter for only the username and IP
+user_IP_regex = re.compile(r':?\s*([^\s(]+)\s*\((\d{1,3}(?:\.\d{1,3}){3}):\d{1,5}\)')
+
+#filter for the username and IP inside []
+User_IP_log_regex = re.compile(r'^(.+?)\s*\[(\d{1,3}(?:\.\d{1,3}){3})\]$')
+
 
 def update_paths():
     #open the path files
