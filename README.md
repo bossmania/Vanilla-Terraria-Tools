@@ -38,12 +38,11 @@ language=en-US
 secure=0
 banlist=~/admin/banlist.txt
 ```
-8. modify the `~/admin/ApprovedIPs.txt` file to be a list of IPs (separated by new line) for the people who are allowed to use the / commands.
-	EX: 
+8. modify the `~/admin/ApprovedIPs.txt` file to be a list of IPs (separated by new line) for the people who are allowed to use the / commands. The following is an example of what it should look like.
   ```
-	  127.0.0.1
-	  192.168.1.1
-	  10.0.0.1
+  127.0.0.1
+  192.168.1.1
+  10.0.0.1
   ```
 9. start the server again (`./start_server.sh`) and it should automatically use the config file to auto load the world.
 
