@@ -108,3 +108,24 @@ def settle(proc):
     proc.stdin.write(f"settle\n")
     proc.stdin.write(f"say Sucessfully settled all of the water in the world!\n")
     proc.stdin.flush()
+
+def help(proc):
+    #the help message
+    msg = """/kick <USERNAME>: kicks a player from the server
+    /ban <USERNAME>: bans a plyer from the server (can ban offline ppl)
+    /save: save the world at the current's state.
+    /backup: backup the world right now.
+    /restore (/rollback): shows the last 8 backups.
+    /restore (/rollback) <NUMBER>: restore the world to the backup corresponding with the number.
+    /exit: exits the server.
+    /settle: settles all of the liquids in the world.
+    /admin: shows this help message. 
+    """
+
+    #split the help msg into multi lines and go through them
+    msg_lines = msg.splitlines()
+    for line in msg_lines:
+        #strip the leading whitespaces and print the line
+        line = line.lstrip()
+        proc.stdin.write(f"say {line}\n")
+    proc.stdin.flush()

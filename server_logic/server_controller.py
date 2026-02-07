@@ -29,6 +29,7 @@ def auto_backup_world():
 
 #command handler
 def command_checker(line, proc):
+    #check if the player has permission to run commands
     if handle_commands.check_if_allowed(envs.PLAYER_LOG, line):
         #handle /kick command
         if "/kick" in line:
@@ -42,7 +43,7 @@ def command_checker(line, proc):
         if "/backup" in line:
             handle_commands.backup(proc)
 
-        #handle /restore command
+        #handle /restore (or /rollback) command
         if "/restore" in line or "/rollback" in line:
             handle_commands.restore(line, proc)
 
@@ -58,6 +59,8 @@ def command_checker(line, proc):
         if "/settle" in line:
             handle_commands.settle(proc)
 
+        if "/admin" in line:
+            handle_commands.help(proc)
 
 def read_output(proc):
     #get stdout
