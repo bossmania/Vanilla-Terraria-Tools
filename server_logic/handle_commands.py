@@ -52,12 +52,12 @@ def kick(line, proc):
     proc.stdin.write(f"say Kicked {user} from the server!\n")
     proc.stdin.flush()
 
-def ban(line, proc, BANLIST):
+def ban(line, proc):
     #get the username
     user = envs.ban_regex.sub("", line)
 
     #banned the player and show it to the chat
-    response = offline_ban.ban_player(envs.PLAYER_LOG, BANLIST, user)
+    response = offline_ban.ban_player(envs.PLAYER_LOG, envs.BANLIST, user)
     print(logger.timestamp(f"FROM OFFLINE_BAN: {response}"))
 
     #kick them from the server

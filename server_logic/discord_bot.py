@@ -17,11 +17,40 @@ def start_bot(TOKEN, proc):
     async def on_ready():
         print(f"Logged in as {bot.user}")
 
-    #basic kick command 
+    #kick command 
     @bot.command()
-    async def kick(ctx, username):
-        handle_commands.kick(username, proc)
-        await ctx.send(f"Kicked {username}")
+    async def kick(ctx, user):
+        #kick the player and say that they're kicked
+        handle_commands.kick(user, proc)
+        await ctx.send(f"Kicked {user} from the server!")
+
+    #ban command 
+    @bot.command()
+    async def ban(ctx, user):
+        #ban the player and say that they're ban
+        handle_commands.ban(user, proc)
+        await ctx.send(f"Banned {user} from the server!")
+
+    #save command 
+    @bot.command()
+    async def save(ctx):
+        #save the world
+        handle_commands.save(proc)
+        await ctx.send(f"Sucessfully saved the world!")
+
+    #exit command 
+    @bot.command()
+    async def exit(ctx):
+        #exit the world
+        handle_commands.exit(proc)
+        await ctx.send(f"Sucessfully saved and exited the world!")
+    
+    #settle command 
+    @bot.command()
+    async def settle(ctx):
+        #settle the world's water
+        handle_commands.settle(proc)
+        await ctx.send(f"Sucessfully settled all of the water in the world!")
 
     #run the bot
     bot.run(TOKEN)

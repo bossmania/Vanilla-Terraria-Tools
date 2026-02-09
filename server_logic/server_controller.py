@@ -36,7 +36,7 @@ def command_checker(line, proc):
 
         #handle /ban command
         if "/ban" in line:
-            handle_commands.ban(line, proc, envs.BANLIST)
+            handle_commands.ban(line, proc)
 
         #handle /backup command
         if "/backup" in line:
