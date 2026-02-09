@@ -7,6 +7,27 @@ from discord.ext import commands
 #set the prefix used
 PREFIX = "!"
 
+#set the discrod bot to have default permission and the ability to read messages and see member info
+intents = discord.Intents.default()
+intents.message_content = True
+intents.members = True
+
+#create the bot client and disable the built in help command
+bot = commands.Bot(command_prefix=PREFIX, intents=intents)
+bot.help_command = None
+
+async def chat_log(msg):
+    #get the chat channel and check if it's real
+    channel = bot.get_channel(envs.CHAT_CHANNEL_ID)
+    if channel:
+        #get the username and message
+        username = envs.user_regex.search(msg).group()
+        message = msg.split(">")[1]
+
+        #send the message as a embed
+        embed = discord.Embed(title=username, description=message, color=0xeb7353)
+        await channel.send(embed=embed)
+
 def can_run_command():
     async def predicate(ctx):
         #check if the user has the admin role and is in the right channel
@@ -14,19 +35,13 @@ def can_run_command():
             if role.id == envs.ADMIN_ROLE_ID and ctx.channel.id == envs.BOT_CHANNEL_ID:
                 return True
 
+        #return false if they can't run the command
+        return False
+
     #run the predicate on the command
     return commands.check(predicate)
 
 def start_bot(proc):
-    #set the discrod bot to have default permission and the ability to read messages and see member info
-    intents = discord.Intents.default()
-    intents.message_content = True
-    intents.members = True
-
-    #create the bot client and disable the built in help command
-    bot = commands.Bot(command_prefix=PREFIX, intents=intents)
-    bot.help_command = None
-
     #say when the bot is online
     @bot.event
     async def on_ready():

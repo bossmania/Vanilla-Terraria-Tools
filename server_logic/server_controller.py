@@ -2,6 +2,7 @@ import sys
 import envs
 import time
 import logger
+import asyncio
 import threading
 import subprocess
 import discord_bot
@@ -72,7 +73,11 @@ def read_output(proc):
 
         #check if the line matches a regex filter for the log file to store at
         if envs.chat_regex.search(line):
+            #log the chat message
             logger.write_log(stamped, envs.CHAT_LOG)
+
+            #send the chat message to discord
+            asyncio.run_coroutine_threadsafe(discord_bot.chat_log(line), discord_bot.bot.loop)
             
             #check if the line was a command, and execute on it
             command_checker(line, proc)
@@ -112,10 +117,10 @@ def main():
         )
 
         #start controlling the server
-        # threading.Thread(target=read_output, args=(proc,), daemon=True).start()
-        # threading.Thread(target=read_input, args=(proc,), daemon=True).start()
-        # threading.Thread(target=check_players, args=(proc,), daemon=True).start()
-        # threading.Thread(target=auto_backup_world, daemon=True).start()
+        threading.Thread(target=read_output, args=(proc,), daemon=True).start()
+        threading.Thread(target=read_input, args=(proc,), daemon=True).start()
+        threading.Thread(target=check_players, args=(proc,), daemon=True).start()
+        threading.Thread(target=auto_backup_world, daemon=True).start()
         threading.Thread(target=use_discord_bot, args=(proc,),daemon=True).start()
 
         #wait for the server to stop before stopping the script
