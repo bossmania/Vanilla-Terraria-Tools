@@ -49,10 +49,10 @@ banlist=~/admin/banlist.txt
 ## Commands
 - `/kick <USERNAME>`: kicks a player from the server.
 - `/ban <USERNAME>`: ban a player from the server (can ban offline people).
-- `/save`: save the world at the current's state.
 - `/backup`: backup the world right now.
 - `/restore (/rollback)`: shows the last 8 backups.
 - `/restore (/rollback) <NUMBER>`: restore the world to the backup corresponding with the number.
+- `/save`: save the world at the current's state.
 - `/exit`: exits (and saves) the server.
 - `/settle`: settles all of the liquids in the world.
 - `/admin:` shows this help message.

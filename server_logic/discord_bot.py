@@ -73,12 +73,12 @@ def start_bot(TOKEN, proc):
         embed=discord.Embed(title="Help Commands", description="shows all of the help commands", color=0x2ec27e)
 
         #set all of the commands
-        embed.add_field(name=f"{PREFIX}help", value="Shows the help message.")
         embed.add_field(name=f"{PREFIX}kick <USERNAME>", value="Kicks a player from the server.")
         embed.add_field(name=f"{PREFIX}ban <USERNAME>", value="Bans a player from the server.")
         embed.add_field(name=f"{PREFIX}save", value="Save the world.")
         embed.add_field(name=f"{PREFIX}exit", value="Save and exit the world.")
         embed.add_field(name=f"{PREFIX}settle", value="Settle the moving water.")
+        embed.add_field(name=f"{PREFIX}help", value="Shows the help message.")
         
         #send the embed
         await ctx.send(embed=embed)
