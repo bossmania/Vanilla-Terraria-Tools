@@ -134,8 +134,8 @@ def help(proc):
     /ban <USERNAME>: bansa player from the server (can ban offline people).
     /save: save the world at the current's state.
     /backup: backup the world right now.
-    /restore (/rollback): shows the last 8 backups.
-    /restore (/rollback) <NUMBER>: restore the world to the backup corresponding with the number.
+    /rollback (/restore): shows the last 8 backups.
+    /rollback (/restore) <NUMBER>: restore the world to the backup corresponding with the number.
     /exit: exits (and saves) the server.
     /settle: settles all of the liquids in the world.
     /admin: shows this help message. 
