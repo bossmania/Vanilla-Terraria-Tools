@@ -30,8 +30,8 @@ def start_bot(TOKEN, proc):
             return
 
         #kick the player and say that they're kicked
-        handle_commands.kick(user, proc)
-        await ctx.send(f"Kicked {user} from the server!")
+        msg = handle_commands.kick(user, proc)
+        await ctx.send(msg)
 
     #ban command 
     @bot.command()
@@ -42,29 +42,36 @@ def start_bot(TOKEN, proc):
             return
 
         #ban the player and say that they're ban
-        handle_commands.ban(user, proc)
-        await ctx.send(f"Banned {user} from the server!")
+        msg = handle_commands.ban(user, proc)
+        await ctx.send(msg)
+
+    #backup command 
+    @bot.command()
+    async def backup(ctx):
+        #backup the world
+        msg = handle_commands.backup(proc)
+        await ctx.send(msg)
 
     #save command 
     @bot.command()
     async def save(ctx):
         #save the world
-        handle_commands.save(proc)
-        await ctx.send(f"Sucessfully saved the world!")
+        msg = handle_commands.save(proc)
+        await ctx.send(msg)
 
     #exit command 
     @bot.command()
     async def exit(ctx):
         #exit the world
-        handle_commands.exit(proc)
-        await ctx.send(f"Sucessfully saved and exited the world!")
+        msg = handle_commands.exit(proc)
+        await ctx.send(msg)
     
     #settle command 
     @bot.command()
     async def settle(ctx):
         #settle the world's water
-        handle_commands.settle(proc)
-        await ctx.send(f"Sucessfully settled all of the water in the world!")
+        msg = handle_commands.settle(proc)
+        await ctx.send(msg)
 
     #help command
     @bot.command()

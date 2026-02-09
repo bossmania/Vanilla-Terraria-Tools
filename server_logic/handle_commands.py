@@ -49,8 +49,11 @@ def kick(line, proc):
     
     #kick the user and say that they're kicked
     proc.stdin.write(f"kick {user}\n")
-    proc.stdin.write(f"say Kicked {user} from the server!\n")
+    msg = f"Kicked {user} from the server!"
+    proc.stdin.write(f"say {msg}\n")
     proc.stdin.flush()
+    
+    return msg
 
 def ban(line, proc):
     #get the username
@@ -62,14 +65,24 @@ def ban(line, proc):
 
     #kick them from the server
     proc.stdin.write(f"kick {user}\n")
-    proc.stdin.write(f"say Banned {user} from the server!\n")
+
+    #say that they got kicked
+    msg = f"Banned {user} from the server!"
+    proc.stdin.write(f"say {msg}\n")
     proc.stdin.flush()
 
+    return msg
+
 def backup(proc):
-    #backup the world and say when it was backed
+    #backup the world create the msg
     timestamp = world_controller.timestamp_cleaner(world_controller.backup_world())
-    proc.stdin.write(f"say Sucessfully backup the world @ {timestamp} {datetime.now().astimezone().strftime("%Z")}!\n")
+    msg = f"Sucessfully backup the world @ {timestamp} {datetime.now().astimezone().strftime("%Z")}"
+
+    #say when it was backed
+    proc.stdin.write(f"say {msg}!\n")
     proc.stdin.flush()
+
+    return msg
 
 def restore(line, proc):
     #delete the username from the command
@@ -94,20 +107,26 @@ def restore(line, proc):
 def save(proc):
     #save the world
     proc.stdin.write(f"save\n")
-    proc.stdin.write(f"say Sucessfully saved the world!\n")
+    msg = f"Sucessfully saved the world"
+    proc.stdin.write(f"say {msg}!\n")
     proc.stdin.flush()
+    return msg
 
 def exit(proc):
     #exit the server
-    proc.stdin.write(f"say Shutting down the world now!\n")
+    msg = f"Shutting down the world now!"
+    proc.stdin.write(f"say {msg}\n")
     proc.stdin.write(f"exit\n")
     proc.stdin.flush()
+    return msg
 
 def settle(proc):
     #settle all of the world in the world
     proc.stdin.write(f"settle\n")
-    proc.stdin.write(f"say Sucessfully settled all of the water in the world!\n")
+    msg = f"Sucessfully settled all of the water in the world!"
+    proc.stdin.write(f"say {msg}\n")
     proc.stdin.flush()
+    return msg
 
 def help(proc):
     #the help message
