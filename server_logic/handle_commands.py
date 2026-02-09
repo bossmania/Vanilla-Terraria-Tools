@@ -8,6 +8,11 @@ from os import path
 import world_controller
 from datetime import datetime
 
+#wrapper function to easily say a message in the game chat
+def say(msg, proc):
+    proc.stdin.write(f"say {msg}\n")
+    proc.stdin.flush()
+
 #get the users 
 def check_if_allowed(player_file, line):
     #get the user and prep the IP search
@@ -50,8 +55,7 @@ def kick(line, proc):
     #kick the user and say that they're kicked
     proc.stdin.write(f"kick {user}\n")
     msg = f"Kicked {user} from the server!"
-    proc.stdin.write(f"say {msg}\n")
-    proc.stdin.flush()
+    say(msg, proc)
     
     return msg
 
@@ -68,8 +72,7 @@ def ban(line, proc):
 
     #say that they got kicked
     msg = f"Banned {user} from the server!"
-    proc.stdin.write(f"say {msg}\n")
-    proc.stdin.flush()
+    say(msg, proc)
 
     return msg
 
@@ -79,8 +82,7 @@ def backup(proc):
     msg = f"Sucessfully backup the world @ {timestamp}!"
 
     #say when it was backed
-    proc.stdin.write(f"say {msg}!\n")
-    proc.stdin.flush()
+    say(msg, proc)
 
     return msg
 
@@ -103,22 +105,21 @@ def restore(line, proc):
 
         #display the backups with their index
         for index, backup in enumerate(backups):
-            proc.stdin.write(f"say {index+1}: {backup}\n")
-        proc.stdin.flush()
+            backup = f"{index+1}: {backup}"
+            say(backup, proc)
         
 
 def save(proc):
     #save the world
     proc.stdin.write(f"save\n")
     msg = f"Sucessfully saved the world"
-    proc.stdin.write(f"say {msg}!\n")
-    proc.stdin.flush()
+    say(msg, proc)
     return msg
 
 def exit(proc):
     #exit the server
     msg = f"Shutting down the world now!"
-    proc.stdin.write(f"say {msg}\n")
+    say(msg, proc)
     proc.stdin.write(f"exit\n")
     proc.stdin.flush()
     return msg
@@ -127,8 +128,7 @@ def settle(proc):
     #settle all of the world in the world
     proc.stdin.write(f"settle\n")
     msg = f"Sucessfully settled all of the water in the world!"
-    proc.stdin.write(f"say {msg}\n")
-    proc.stdin.flush()
+    say(msg, proc)
     return msg
 
 def help(proc):
@@ -149,5 +149,4 @@ def help(proc):
     for line in msg_lines:
         #strip the leading whitespaces and print the line
         line = line.lstrip()
-        proc.stdin.write(f"say {line}\n")
-    proc.stdin.flush()
+        say(line, proc)
