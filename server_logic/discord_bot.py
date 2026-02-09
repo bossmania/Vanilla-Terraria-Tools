@@ -19,14 +19,24 @@ def start_bot(TOKEN, proc):
 
     #kick command 
     @bot.command()
-    async def kick(ctx, user):
+    async def kick(ctx, user=None):
+        #stop if there was no username provided
+        if user == None or user == "":
+            await ctx.send("Please enter in a username!")
+            return
+
         #kick the player and say that they're kicked
         handle_commands.kick(user, proc)
         await ctx.send(f"Kicked {user} from the server!")
 
     #ban command 
     @bot.command()
-    async def ban(ctx, user):
+    async def ban(ctx, user=None):
+        #stop if there was no username provided
+        if user == None or user == "":
+            await ctx.send("Please enter in a username!")
+            return
+
         #ban the player and say that they're ban
         handle_commands.ban(user, proc)
         await ctx.send(f"Banned {user} from the server!")
