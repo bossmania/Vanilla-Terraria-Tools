@@ -17,11 +17,11 @@ def start_bot(TOKEN, proc):
     async def on_ready():
         print(f"Logged in as {bot.user}")
 
-
-    #basic temp command 
+    #basic kick command 
     @bot.command()
-    async def ping(ctx):
-        await ctx.send("Pong")
+    async def kick(ctx, username):
+        handle_commands.kick(username, proc)
+        await ctx.send(f"Kicked {username}")
 
     #run the bot
     bot.run(TOKEN)
