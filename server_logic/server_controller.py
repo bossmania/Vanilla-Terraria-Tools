@@ -1,15 +1,14 @@
-import re
+import os
 import sys
 import envs
 import time
 import logger
-import pathlib
 import threading
 import subprocess
-import offline_ban
-import world_controller
-from os import path
+import discord_bot
 import handle_commands
+import world_controller
+from dotenv import load_dotenv
 
 #store the server binary location with args
 SERVER_CMD = sys.argv[1:]
@@ -91,6 +90,15 @@ def read_input(proc):
         proc.stdin.write(line)
         proc.stdin.flush()
 
+#only use the discord bot when there is a token provided
+def use_discord_bot(proc):
+    #get the token from the .env file
+    load_dotenv()
+    TOKEN = os.getenv("TOKEN")
+
+    #if there is a token, then use the discord bot
+    if (len(TOKEN) > 0):
+        discord_bot.start_bot(TOKEN, proc)
 
 def main():
     envs.update_paths()
@@ -109,11 +117,12 @@ def main():
             bufsize=1
         )
 
-        #start controlling the stdin and stdout of the server
+        #start controlling the server
         threading.Thread(target=read_output, args=(proc,), daemon=True).start()
         threading.Thread(target=read_input, args=(proc,), daemon=True).start()
         threading.Thread(target=check_players, args=(proc,), daemon=True).start()
         threading.Thread(target=auto_backup_world, daemon=True).start()
+        threading.Thread(target=use_discord_bot, args=(proc,),daemon=True).start()
 
         #wait for the server to stop before stopping the script
         code = proc.wait()
