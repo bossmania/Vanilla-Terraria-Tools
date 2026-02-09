@@ -82,6 +82,9 @@ def start_bot(TOKEN, proc):
         #set all of the commands
         embed.add_field(name=f"{PREFIX}kick <USERNAME>", value="Kicks a player from the server.")
         embed.add_field(name=f"{PREFIX}ban <USERNAME>", value="Bans a player from the server.")
+        embed.add_field(name=f"{PREFIX}backup", value="Backup up the world.")
+        embed.add_field(name=f"{PREFIX}rollback (/restore)", value="shows a list of recent backups.")
+        embed.add_field(name=f"{PREFIX}rollback (/restore) <number>", value="rollback the world to that point.")
         embed.add_field(name=f"{PREFIX}save", value="Save the world.")
         embed.add_field(name=f"{PREFIX}exit", value="Save and exit the world.")
         embed.add_field(name=f"{PREFIX}settle", value="Settle the moving water.")
