@@ -92,13 +92,17 @@ def read_input(proc):
 
 #only use the discord bot when there is a token provided
 def use_discord_bot(proc):
-    #get the token from the .env file
+    #get the info from the .env file
     load_dotenv()
     TOKEN = os.getenv("TOKEN")
+    ADMIN_ROLE_ID = int(os.getenv("ADMIN_ROLE_ID"))
+    BOT_CHANNEL_ID = int(os.getenv("BOT_CHANNEL_ID"))
+    CHAT_CHANNEL_ID = int(os.getenv("CHAT_CHANNEL_ID"))
+    NOTIFY_CHANNEL_ID = int(os.getenv("NOTIFY_CHANNEL_ID"))
 
     #if there is a token, then use the discord bot
     if (len(TOKEN) > 0):
-        discord_bot.start_bot(TOKEN, proc)
+        discord_bot.start_bot(TOKEN, ADMIN_ROLE_ID, BOT_CHANNEL_ID, CHAT_CHANNEL_ID, NOTIFY_CHANNEL_ID, proc)
 
 def main():
     envs.update_paths()

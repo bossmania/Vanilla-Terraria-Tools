@@ -1,18 +1,40 @@
-import os
 import envs
 import discord
 import handle_commands
 import world_controller
-import server_controller
 from discord.ext import commands
 
 #set the prefix used
 PREFIX = "!"
 
-def start_bot(TOKEN, proc):
-    #set the discrod bot to have default permission and the ability to read messages
+def admin_only(ADMIN_ROLE_ID):
+    async def predicate(ctx):
+        #check if the user has the admin role
+        for role in ctx.author.roles:
+            if role.id == ADMIN_ROLE_ID:
+                return True
+        
+        #return false when no roles were found
+        return False
+
+    #run the predicate on the command
+    return commands.check(predicate)
+
+def bot_channel(BOT_CHANNEL_ID):
+    async def predicate(ctx):
+        # check if the message is in the right channel
+        if ctx.channel.id == BOT_CHANNEL_ID:
+            return True
+        else:
+            return False
+
+    return commands.check(predicate)
+
+def start_bot(TOKEN, ADMIN_ROLE_ID, BOT_CHANNEL_ID, CHAT_CHANNEL_ID, NOTIFY_CHANNEL_ID, proc):
+    #set the discrod bot to have default permission and the ability to read messages and see member info
     intents = discord.Intents.default()
     intents.message_content = True
+    intents.members = True
 
     #create the bot client and disable the built in help command
     bot = commands.Bot(command_prefix=PREFIX, intents=intents)
@@ -25,6 +47,8 @@ def start_bot(TOKEN, proc):
 
     #kick command 
     @bot.command()
+    @admin_only(ADMIN_ROLE_ID)
+    @bot_channel(BOT_CHANNEL_ID)
     async def kick(ctx, user=None):
         #stop if there was no username provided
         if user == None or user == "":
@@ -37,6 +61,8 @@ def start_bot(TOKEN, proc):
 
     #ban command 
     @bot.command()
+    @admin_only(ADMIN_ROLE_ID)
+    @bot_channel(BOT_CHANNEL_ID)
     async def ban(ctx, user=None):
         #stop if there was no username provided
         if user == None or user == "":
@@ -49,6 +75,8 @@ def start_bot(TOKEN, proc):
 
     #backup command 
     @bot.command()
+    @admin_only(ADMIN_ROLE_ID)
+    @bot_channel(BOT_CHANNEL_ID)
     async def backup(ctx):
         #backup the world
         msg = handle_commands.backup(proc)
@@ -56,6 +84,8 @@ def start_bot(TOKEN, proc):
     
     #rollback command 
     @bot.command(aliases=["restore"])
+    @admin_only(ADMIN_ROLE_ID)
+    @bot_channel(BOT_CHANNEL_ID)
     async def rollback(ctx):
         #func to check when to stop waiting
         def check(message):
@@ -87,6 +117,8 @@ def start_bot(TOKEN, proc):
 
     #save command 
     @bot.command()
+    @admin_only(ADMIN_ROLE_ID)
+    @bot_channel(BOT_CHANNEL_ID)
     async def save(ctx):
         #save the world
         msg = handle_commands.save(proc)
@@ -94,6 +126,8 @@ def start_bot(TOKEN, proc):
 
     #exit command 
     @bot.command()
+    @admin_only(ADMIN_ROLE_ID)
+    @bot_channel(BOT_CHANNEL_ID)
     async def exit(ctx):
         #exit the world
         msg = handle_commands.exit(proc)
@@ -101,6 +135,8 @@ def start_bot(TOKEN, proc):
     
     #settle command 
     @bot.command()
+    @admin_only(ADMIN_ROLE_ID)
+    @bot_channel(BOT_CHANNEL_ID)
     async def settle(ctx):
         #settle the world's water
         msg = handle_commands.settle(proc)
@@ -108,6 +144,8 @@ def start_bot(TOKEN, proc):
 
     #help command
     @bot.command()
+    @admin_only(ADMIN_ROLE_ID)
+    @bot_channel(BOT_CHANNEL_ID)
     async def help(ctx):
         #create the embed with title, desc, and color
         embed=discord.Embed(title="Help Commands", description="shows all of the help commands", color=0x2ec27e)
