@@ -1,4 +1,3 @@
-import os
 import sys
 import envs
 import time
@@ -8,7 +7,6 @@ import subprocess
 import discord_bot
 import handle_commands
 import world_controller
-from dotenv import load_dotenv
 
 #store the server binary location with args
 SERVER_CMD = sys.argv[1:]
@@ -92,17 +90,9 @@ def read_input(proc):
 
 #only use the discord bot when there is a token provided
 def use_discord_bot(proc):
-    #get the info from the .env file
-    load_dotenv()
-    TOKEN = os.getenv("TOKEN")
-    ADMIN_ROLE_ID = int(os.getenv("ADMIN_ROLE_ID"))
-    BOT_CHANNEL_ID = int(os.getenv("BOT_CHANNEL_ID"))
-    CHAT_CHANNEL_ID = int(os.getenv("CHAT_CHANNEL_ID"))
-    NOTIFY_CHANNEL_ID = int(os.getenv("NOTIFY_CHANNEL_ID"))
-
     #if there is a token, then use the discord bot
-    if (len(TOKEN) > 0):
-        discord_bot.start_bot(TOKEN, ADMIN_ROLE_ID, BOT_CHANNEL_ID, CHAT_CHANNEL_ID, NOTIFY_CHANNEL_ID, proc)
+    if (len(envs.TOKEN) > 0):
+        discord_bot.start_bot(proc)
 
 def main():
     envs.update_paths()
@@ -122,10 +112,10 @@ def main():
         )
 
         #start controlling the server
-        threading.Thread(target=read_output, args=(proc,), daemon=True).start()
-        threading.Thread(target=read_input, args=(proc,), daemon=True).start()
-        threading.Thread(target=check_players, args=(proc,), daemon=True).start()
-        threading.Thread(target=auto_backup_world, daemon=True).start()
+        # threading.Thread(target=read_output, args=(proc,), daemon=True).start()
+        # threading.Thread(target=read_input, args=(proc,), daemon=True).start()
+        # threading.Thread(target=check_players, args=(proc,), daemon=True).start()
+        # threading.Thread(target=auto_backup_world, daemon=True).start()
         threading.Thread(target=use_discord_bot, args=(proc,),daemon=True).start()
 
         #wait for the server to stop before stopping the script

@@ -7,30 +7,17 @@ from discord.ext import commands
 #set the prefix used
 PREFIX = "!"
 
-def admin_only(ADMIN_ROLE_ID):
+def can_run_command():
     async def predicate(ctx):
-        #check if the user has the admin role
+        #check if the user has the admin role and is in the right channel
         for role in ctx.author.roles:
-            if role.id == ADMIN_ROLE_ID:
+            if role.id == envs.ADMIN_ROLE_ID and ctx.channel.id == envs.BOT_CHANNEL_ID:
                 return True
-        
-        #return false when no roles were found
-        return False
 
     #run the predicate on the command
     return commands.check(predicate)
 
-def bot_channel(BOT_CHANNEL_ID):
-    async def predicate(ctx):
-        # check if the message is in the right channel
-        if ctx.channel.id == BOT_CHANNEL_ID:
-            return True
-        else:
-            return False
-
-    return commands.check(predicate)
-
-def start_bot(TOKEN, ADMIN_ROLE_ID, BOT_CHANNEL_ID, CHAT_CHANNEL_ID, NOTIFY_CHANNEL_ID, proc):
+def start_bot(proc):
     #set the discrod bot to have default permission and the ability to read messages and see member info
     intents = discord.Intents.default()
     intents.message_content = True
@@ -47,8 +34,7 @@ def start_bot(TOKEN, ADMIN_ROLE_ID, BOT_CHANNEL_ID, CHAT_CHANNEL_ID, NOTIFY_CHAN
 
     #kick command 
     @bot.command()
-    @admin_only(ADMIN_ROLE_ID)
-    @bot_channel(BOT_CHANNEL_ID)
+    @can_run_command()
     async def kick(ctx, user=None):
         #stop if there was no username provided
         if user == None or user == "":
@@ -61,8 +47,7 @@ def start_bot(TOKEN, ADMIN_ROLE_ID, BOT_CHANNEL_ID, CHAT_CHANNEL_ID, NOTIFY_CHAN
 
     #ban command 
     @bot.command()
-    @admin_only(ADMIN_ROLE_ID)
-    @bot_channel(BOT_CHANNEL_ID)
+    @can_run_command()
     async def ban(ctx, user=None):
         #stop if there was no username provided
         if user == None or user == "":
@@ -75,8 +60,7 @@ def start_bot(TOKEN, ADMIN_ROLE_ID, BOT_CHANNEL_ID, CHAT_CHANNEL_ID, NOTIFY_CHAN
 
     #backup command 
     @bot.command()
-    @admin_only(ADMIN_ROLE_ID)
-    @bot_channel(BOT_CHANNEL_ID)
+    @can_run_command()
     async def backup(ctx):
         #backup the world
         msg = handle_commands.backup(proc)
@@ -84,8 +68,7 @@ def start_bot(TOKEN, ADMIN_ROLE_ID, BOT_CHANNEL_ID, CHAT_CHANNEL_ID, NOTIFY_CHAN
     
     #rollback command 
     @bot.command(aliases=["restore"])
-    @admin_only(ADMIN_ROLE_ID)
-    @bot_channel(BOT_CHANNEL_ID)
+    @can_run_command()
     async def rollback(ctx):
         #func to check when to stop waiting
         def check(message):
@@ -117,8 +100,7 @@ def start_bot(TOKEN, ADMIN_ROLE_ID, BOT_CHANNEL_ID, CHAT_CHANNEL_ID, NOTIFY_CHAN
 
     #save command 
     @bot.command()
-    @admin_only(ADMIN_ROLE_ID)
-    @bot_channel(BOT_CHANNEL_ID)
+    @can_run_command()
     async def save(ctx):
         #save the world
         msg = handle_commands.save(proc)
@@ -126,8 +108,7 @@ def start_bot(TOKEN, ADMIN_ROLE_ID, BOT_CHANNEL_ID, CHAT_CHANNEL_ID, NOTIFY_CHAN
 
     #exit command 
     @bot.command()
-    @admin_only(ADMIN_ROLE_ID)
-    @bot_channel(BOT_CHANNEL_ID)
+    @can_run_command()
     async def exit(ctx):
         #exit the world
         msg = handle_commands.exit(proc)
@@ -135,8 +116,7 @@ def start_bot(TOKEN, ADMIN_ROLE_ID, BOT_CHANNEL_ID, CHAT_CHANNEL_ID, NOTIFY_CHAN
     
     #settle command 
     @bot.command()
-    @admin_only(ADMIN_ROLE_ID)
-    @bot_channel(BOT_CHANNEL_ID)
+    @can_run_command()
     async def settle(ctx):
         #settle the world's water
         msg = handle_commands.settle(proc)
@@ -144,24 +124,23 @@ def start_bot(TOKEN, ADMIN_ROLE_ID, BOT_CHANNEL_ID, CHAT_CHANNEL_ID, NOTIFY_CHAN
 
     #help command
     @bot.command()
-    @admin_only(ADMIN_ROLE_ID)
-    @bot_channel(BOT_CHANNEL_ID)
+    @can_run_command()
     async def help(ctx):
         #create the embed with title, desc, and color
         embed=discord.Embed(title="Help Commands", description="shows all of the help commands", color=0x2ec27e)
 
         #set all of the commands
-        embed.add_field(name=f"{PREFIX}kick <USERNAME>", value="Kicks a player from the server.")
-        embed.add_field(name=f"{PREFIX}ban <USERNAME>", value="Bans a player from the server.")
-        embed.add_field(name=f"{PREFIX}backup", value="Backup up the world.")
-        embed.add_field(name=f"{PREFIX}rollback (/restore)", value="rollback to a backup from a list of recent backups.")
-        embed.add_field(name=f"{PREFIX}save", value="Save the world.")
-        embed.add_field(name=f"{PREFIX}exit", value="Save and exit the world.")
-        embed.add_field(name=f"{PREFIX}settle", value="Settle the moving water.")
-        embed.add_field(name=f"{PREFIX}help", value="Shows the help message.")
+        embed.add_field(name=f"{PREFIX}kick <USERNAME>", value="Kicks a player from the server.",inline=False)
+        embed.add_field(name=f"{PREFIX}ban <USERNAME>", value="Bans a player from the server.",inline=False)
+        embed.add_field(name=f"{PREFIX}backup", value="Backup up the world.",inline=False)
+        embed.add_field(name=f"{PREFIX}rollback (/restore)", value="rollback to a backup from a list of recent backups.",inline=False)
+        embed.add_field(name=f"{PREFIX}save", value="Save the world.",inline=False)
+        embed.add_field(name=f"{PREFIX}exit", value="Save and exit the world.",inline=False)
+        embed.add_field(name=f"{PREFIX}settle", value="Settle the moving water.",inline=False)
+        embed.add_field(name=f"{PREFIX}help", value="Shows the help message.",inline=False)
         
         #send the embed
         await ctx.send(embed=embed)
 
     #run the bot
-    bot.run(TOKEN)
+    bot.run(envs.TOKEN)
