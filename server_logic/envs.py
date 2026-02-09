@@ -34,6 +34,9 @@ user_IP_regex = re.compile(r':?\s*([^\s(]+)\s*\((\d{1,3}(?:\.\d{1,3}){3}):\d{1,5
 #filter for the username and IP inside []
 User_IP_log_regex = re.compile(r'^(.+?)\s*\[(\d{1,3}(?:\.\d{1,3}){3})\]$')
 
+#filter to only show numbers
+number_regex = re.compile(r'\d+')
+
 #tell the server to restart
 RESTARTING = False
 

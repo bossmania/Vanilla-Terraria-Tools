@@ -8,7 +8,8 @@ from datetime import datetime
 
 #reformat the timestamp to make it easier to read
 def timestamp_cleaner(timestamp):
-    return timestamp.replace("-", "/").replace("__", " ").replace("_", ":")
+    timestamp_formatted = timestamp.replace("-", "/").replace("__", " ").replace("_", ":")
+    return f"{timestamp_formatted} {datetime.now().astimezone().strftime("%Z")}"
 
 def backup_world():
     # timestamp like: 2026-02-04__14_32_10
@@ -24,7 +25,7 @@ def backup_world():
     #return the timestamp
     return timestamp
     
-def get_restore_points(cleanup=True):
+def get_restore_points(amount, cleanup=True):
     #prep the backup list 
     backups = []
 
@@ -38,11 +39,11 @@ def get_restore_points(cleanup=True):
     
     #sort the backup list in desc order and only show 8
     backups.sort(reverse=True)
-    return backups[0:8]
+    return backups[0:amount]
 
-def restore_backup(index, proc):
+def restore_backup(amount, index, proc):
     #get the specific backup and the path to it
-    backup = get_restore_points(cleanup=False)[index]
+    backup = get_restore_points(amount, cleanup=False)[index]
     backup_folder = os.path.join(envs.WORLD_BACKUP_DIR, backup)
 
     for file in os.listdir(backup_folder):
@@ -57,7 +58,7 @@ def restore_backup(index, proc):
     envs.RESTARTING = True
 
     #exit the server without saving
-    proc.stdin.write("say Rolling back the server to the backup now\n")
+    proc.stdin.write(f"say Rolling back the server to {timestamp_cleaner(backup)} now\n")
     proc.stdin.write("exit-nosave\n")
     proc.stdin.flush()
     

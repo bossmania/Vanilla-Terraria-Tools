@@ -1,6 +1,8 @@
 import os
+import envs
 import discord
 import handle_commands
+import world_controller
 import server_controller
 from discord.ext import commands
 
@@ -51,6 +53,37 @@ def start_bot(TOKEN, proc):
         #backup the world
         msg = handle_commands.backup(proc)
         await ctx.send(msg)
+    
+    #rollback command 
+    @bot.command(aliases=["restore"])
+    async def rollback(ctx):
+        #func to check when to stop waiting
+        def check(message):
+            #pass when the owner respond back at the same channel
+            return message.author == ctx.author and message.channel == ctx.channel
+        
+        #get the amount of most recent backups
+        AMOUNT = 20
+        rollbacks = world_controller.get_restore_points(AMOUNT)
+
+        #create the embed with title, desc, and color
+        embed=discord.Embed(title="Backup Lists", description="shows all of the recent backups.", color=0x966b59)
+
+        #list all of the rollback version in the embed
+        for index, rollback in enumerate(rollbacks):
+            embed.add_field(name=str(index+1), value=rollback, inline=False)
+
+        #send the embed and the respond msg
+        await ctx.send(embed=embed)
+        await ctx.send(f"Respond with the number you want to rollback to. (EX: respond with **1** if you want to rollback to {rollbacks[0]})")
+        
+        #wait for the response, and get the number from it within 2 mins
+        msg = await bot.wait_for("message", check=check,timeout=120)
+        rollback_ver = int(envs.number_regex.search(msg.content).group())
+
+        #rollback the world now
+        await ctx.send(f"Got it! Going to rollback to {rollbacks[rollback_ver-1]} now!")
+        world_controller.restore_backup(AMOUNT, rollback_ver-1, proc)
 
     #save command 
     @bot.command()
@@ -83,8 +116,7 @@ def start_bot(TOKEN, proc):
         embed.add_field(name=f"{PREFIX}kick <USERNAME>", value="Kicks a player from the server.")
         embed.add_field(name=f"{PREFIX}ban <USERNAME>", value="Bans a player from the server.")
         embed.add_field(name=f"{PREFIX}backup", value="Backup up the world.")
-        embed.add_field(name=f"{PREFIX}rollback (/restore)", value="shows a list of recent backups.")
-        embed.add_field(name=f"{PREFIX}rollback (/restore) <NUMBER>", value="rollback the world to that point.")
+        embed.add_field(name=f"{PREFIX}rollback (/restore)", value="rollback to a backup from a list of recent backups.")
         embed.add_field(name=f"{PREFIX}save", value="Save the world.")
         embed.add_field(name=f"{PREFIX}exit", value="Save and exit the world.")
         embed.add_field(name=f"{PREFIX}settle", value="Settle the moving water.")

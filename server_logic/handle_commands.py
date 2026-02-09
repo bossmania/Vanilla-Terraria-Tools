@@ -76,7 +76,7 @@ def ban(line, proc):
 def backup(proc):
     #backup the world create the msg
     timestamp = world_controller.timestamp_cleaner(world_controller.backup_world())
-    msg = f"Sucessfully backup the world @ {timestamp} {datetime.now().astimezone().strftime("%Z")}"
+    msg = f"Sucessfully backup the world @ {timestamp}!"
 
     #say when it was backed
     proc.stdin.write(f"say {msg}!\n")
@@ -87,16 +87,19 @@ def backup(proc):
 def restore(line, proc):
     #delete the username from the command
     line = envs.chat_regex.sub("", line)[1:]
+
+    #the amount of backups to show in chat
+    AMOUNT = 8
     
     #check if the command has an args
     args = line.split(" ")
     if (len(args) > 1):
         #rollback the world to that point
         rollback_ver = line.split(" ")[1]
-        world_controller.restore_backup(int(rollback_ver) - 1, proc)
+        world_controller.restore_backup(AMOUNT, int(rollback_ver) - 1, proc)
     else:
         #get the list of backups
-        backups = world_controller.get_restore_points()
+        backups = world_controller.get_restore_points(AMOUNT)
 
         #display the backups with their index
         for index, backup in enumerate(backups):
