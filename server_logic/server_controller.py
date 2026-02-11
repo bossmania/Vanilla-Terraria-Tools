@@ -8,22 +8,54 @@ import subprocess
 import discord_bot
 import handle_commands
 import world_controller
+from datetime import datetime
 
 #store the server binary location with args
 SERVER_CMD = sys.argv[1:]
 
+#store the last time the status has been updated
+LAST_UPDATE_STATUS = datetime.now()
+
+PLAYER_CHECK_FREQ = 7
+
 #check the amount of players every 7 seconds
 def check_players(proc):
     while True:
-        time.sleep(7)
+        time.sleep(PLAYER_CHECK_FREQ)
         proc.stdin.write("playing\n")
         proc.stdin.flush()
+
+def get_player_count(line):
+    #get the duration of when the last time the status has been updated
+    global LAST_UPDATE_STATUS
+    duration = (datetime.now() - LAST_UPDATE_STATUS).total_seconds()
+    
+    #prep the player check
+    player_count = None
+    
+    #check how many players are online
+    if "player connected." in line:
+        player_count = int(envs.number_regex.search(line).group())
+    elif "No players connected." in line:
+        player_count = 0
+
+    #check if it sucessfully got the player count, and enough time has passed
+    if player_count != None and duration > PLAYER_CHECK_FREQ:
+        #update the player count adn reset the update status timer
+        asyncio.run_coroutine_threadsafe(discord_bot.player_count(player_count), discord_bot.bot.loop)
+        LAST_UPDATE_STATUS = datetime.now()
 
 #func to auto backup the world every 15 mins 
 def auto_backup_world():
     while True:
         time.sleep(envs.BACKUP_TIMER)
         world_controller.backup_world()
+
+#only use the discord bot when there is a token provided
+def use_discord_bot(proc):
+    #if there is a token, then use the discord bot
+    if (len(envs.TOKEN) > 0):
+        discord_bot.start_bot(proc)
 
 #command handler
 def command_checker(line, proc):
@@ -86,18 +118,15 @@ def read_output(proc):
         else:
             logger.write_log(stamped, envs.OTHER_LOG)
 
+        #attempt to get the player count
+        get_player_count(line)
+
 
 #read the keyboard input and send it
 def read_input(proc):
     for line in sys.stdin:
         proc.stdin.write(line)
         proc.stdin.flush()
-
-#only use the discord bot when there is a token provided
-def use_discord_bot(proc):
-    #if there is a token, then use the discord bot
-    if (len(envs.TOKEN) > 0):
-        discord_bot.start_bot(proc)
 
 def main():
     envs.update_paths()

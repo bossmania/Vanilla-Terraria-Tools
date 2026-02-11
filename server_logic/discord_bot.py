@@ -16,6 +16,11 @@ intents.members = True
 bot = commands.Bot(command_prefix=PREFIX, intents=intents)
 bot.help_command = None
 
+async def player_count(amount):
+    #set the bot's activity to be X players online
+    activity = discord.Activity(type=discord.ActivityType.watching, name=f"{amount} players online!")
+    await bot.change_presence(activity=activity)
+
 async def chat_log(msg):
     #get the chat channel and check if it's real
     channel = bot.get_channel(envs.CHAT_CHANNEL_ID)
