@@ -21,7 +21,7 @@ This a Terraria vanilla server wrapper where it can add additional tools to help
 ## Dependencies
 - A Linux server (this has been only tested on Linux. Windows and Mac might work, but your mileage may vary).
 - The `unzip` package.
-- Python 3.12.3+ (earlier versions may work, but your mileage may vary).
+- Python 3.12.3+ and python3.12-venv (earlier versions may work, but your mileage may vary).
 
 ## Setup
 1. Clone the repo via `git clone https://github.com/bossmania/Vanilla-Terraria-Tools`
