@@ -78,7 +78,7 @@ banlist=~/admin/banlist.txt
 - `/settle`: settles all of the liquids in the world.
 - `/admin:` shows this help message.
 
-## Discord commands
+## Discord_commands
 - `!kick <USERNAME>`: kicks a player from the server.
 - `!ban <USERNAME>`: ban a player from the server.
 - `!backup`: backup the world.
