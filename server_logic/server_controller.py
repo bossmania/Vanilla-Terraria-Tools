@@ -15,8 +15,8 @@ SERVER_CMD = sys.argv[1:]
 
 #store the last time the status has been updated
 LAST_UPDATE_STATUS = datetime.now()
-
 PLAYER_CHECK_FREQ = 7
+USE_DISCORD = False
 
 #check the amount of players every 7 seconds
 def check_players(proc):
@@ -53,8 +53,11 @@ def auto_backup_world():
 
 #only use the discord bot when there is a token provided
 def use_discord_bot(proc):
+    global USE_DISCORD
+    
     #if there is a token, then use the discord bot
     if (len(envs.TOKEN) > 0):
+        USE_DISCORD = True
         discord_bot.start_bot(proc)
 
 #command handler
@@ -107,13 +110,17 @@ def read_output(proc):
         # print to console
         print(stamped)
 
+        if USE_DISCORD and "Server started" in line:
+            asyncio.run_coroutine_threadsafe(discord_bot.notify("The server has booted up!"), discord_bot.bot.loop)
+
         #check if the line matches a regex filter for the log file to store at
         if envs.chat_regex.search(line):
             #log the chat message
             logger.write_log(stamped, envs.CHAT_LOG)
 
-            #send the chat message to discord
-            asyncio.run_coroutine_threadsafe(discord_bot.chat_log(line), discord_bot.bot.loop)
+            #send the chat message to discord if using it
+            if USE_DISCORD:
+                asyncio.run_coroutine_threadsafe(discord_bot.chat_log(line), discord_bot.bot.loop)
             
             #check if the line was a command, and execute on it
             command_checker(line, proc)
@@ -122,8 +129,9 @@ def read_output(proc):
         else:
             logger.write_log(stamped, envs.OTHER_LOG)
 
-        #attempt to get the player count
-        get_player_count(line)
+        #attempt to get the player count for discord if using it
+        if USE_DISCORD:
+            get_player_count(line)
 
 
 #read the keyboard input and send it

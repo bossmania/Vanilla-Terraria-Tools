@@ -33,6 +33,13 @@ async def chat_log(msg):
         embed = discord.Embed(title=username, description=message, color=0xeb7353)
         await channel.send(embed=embed)
 
+async def notify(msg):
+    #get the notify channel and check if it's real
+    channel = bot.get_channel(envs.NOTIFY_CHANNEL_ID)
+    if channel:
+        #send the message
+        await channel.send(msg)
+
 def can_run_command():
     async def predicate(ctx):
         #check if the user has the admin role and is in the right channel
