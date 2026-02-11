@@ -13,7 +13,7 @@ This a Terraria vanilla server wrapper where it can add additional tools to help
 - easy way to manually backup and restore the world .
 - Auto restart server if wasn't properly exited.
 - Monitor and control the server from a optional discord bot.
-	- *Almost* the [same commands set](#Discord commands) as in game. 
+	- *Almost* the [same commands set](#Discord_commands) as in game. 
 	- *Almost* live player count as the bot's status.
 	- Monitor the server's chat log in a dedicated channel.
 	- Notify when the server started, stopped, and restarted.
