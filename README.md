@@ -1,6 +1,6 @@
 # Terraria Vanilla Tools 
 
-This a Terraria vanilla server wrapper where it can add additional tools to help moderate your vanilla server. Note that this can only perform actions that a human can do from the server's console. It can't do extreme things like sever side characters ([Tshock](https://github.com/Pryaxis/TShock) is still needed for that). However what this can do is add in better logs and / commands that can be executed from the game, with the right permission (Yes, that makes this a *"little bit"* janky). 
+This a Terraria vanilla server wrapper where it can add additional tools to help moderate your vanilla server. Note that this can only perform actions that a human can do from the server's console. It can't do extreme things like sever side characters ([Tshock](https://github.com/Pryaxis/TShock) is still needed for that). However what this can do is add in better logs and / commands that can be executed from the game, with the right permission (Yes, that makes this a *"little bit"* janky).
 
 ## Features
 - Saves the server's console as 3 separate log files.
@@ -9,13 +9,20 @@ This a Terraria vanilla server wrapper where it can add additional tools to help
 	- `other.log`: logs the other info from the server's console with timestamps.
 - Multiple [/ commands](#Commands) that can be executed from within game (See step 8 of [the setup](#Setup) in order to limit the commands to only approved IPs)
 - Ban griefers who are offline. 
-- auto backup the world every 15 mins
-- easy way to manually backup and restore the world 
-- Auto restart server if wasn't properly exited
+- auto backup the world every 15 mins.
+- easy way to manually backup and restore the world .
+- Auto restart server if wasn't properly exited.
+- Monitor and control the server from a optional discord bot.
+	- *Almost* the [same commands set](#Discord commands) as in game. 
+	- *Almost* live player count as the bot's status.
+	- Monitor the server's chat log in a dedicated channel.
+	- Notify when the server started, stopped, and restarted.
+	
 ## Dependencies
-- A Linux server (this has been only tested on Linux. Windows and Mac might work, but your mileage may vary)
-- Python 3.12.3+ (earlier versions may work, but your mileage may vary)	￼-
-- the `unzip` package
+- A Linux server (this has been only tested on Linux. Windows and Mac might work, but your mileage may vary).
+- The `unzip` package.
+- Python 3.12.3+ (earlier versions may work, but your mileage may vary).
+
 ## Setup
 1. Clone the repo via `git clone https://github.com/bossmania/Vanilla-Terraria-Tools`
 2. Run the `setup.sh` file to setup the folder structure 
@@ -27,7 +34,7 @@ This a Terraria vanilla server wrapper where it can add additional tools to help
 	- EX: `./start_server.sh 1450` to start the server on version 1.4.5.0.
 5. Create the world that you want.
 6. Stop the server via either typing in `exit`, or pressing `CTRL + C`.
-7. modify the config file for the server at `~/admin/config.txt`. Use the following as a template on what to add: *Replace <USERNAME> with your linux's username, and <WORLD_NAME> with the name of the actual world*
+7. modify the config file for the server at `~/admin/config.txt`. Use the following as a template on what to add: *Replace `<USERNAME>` with your linux's username, and `<WORLD_NAME>` with the name of the actual world*
 ```toml
 world=/home/<USERNAME>/worlds/<WORLD_NAME>.wld
 maxplayers=16
@@ -46,19 +53,44 @@ banlist=~/admin/banlist.txt
   ```
 9. start the server again (`./start_server.sh`) and it should automatically use the config file to auto load the world.
 
+## Discord Bot Setup
+0. [Setup the server wrapper](#Setup).
+1. Follow the Discord's guide on [creating a bot](https://docs.discord.com/developers/quick-start/getting-started#step-1-creating-an-app).
+2. open the `.env` from the project's folder, and put the bot's token in there.
+3. Inside the Discord server, create the channels for interacting with the bot, read the server's chat, and getting notify from the bot.
+	- There should be three channels created.
+4. Go to User setting -> Advanced -> enable Developer mode.
+5. Right click on each of the newly created channels, Copy channel ID, and paste in into the `.env` where it belongs to.
+6. Run `python -m venv venv` to create the python venv.
+7. Run `source venv/bin/activate` to activate the venv.
+8. Run `pip install -r requirements.txt` to install the dependencies.
+9. start the server again (`./start_server.sh`) and the bot should become active.
+
 ## Commands
 - `/kick <USERNAME>`: kicks a player from the server.
 - `/ban <USERNAME>`: ban a player from the server (can ban offline people).
-- `/save`: save the world at the current's state.
 - `/backup`: backup the world right now.
-- `/restore (/rollback)`: shows the last 8 backups.
-- `/restore (/rollback) <NUMBER>`: restore the world to the backup corresponding with the number.
+- `/rollback (/restore)`: shows the last 8 backups.
+- `/rollback (/restore) <NUMBER>`: restore the world to the backup corresponding with the number.
+- `/save`: save the world at the current's state.
 - `/exit`: exits (and saves) the server.
+- `/exit-nosave`: exit the server without saving.
 - `/settle`: settles all of the liquids in the world.
 - `/admin:` shows this help message.
+
+## Discord commands
+- `!kick <USERNAME>`: kicks a player from the server.
+- `!ban <USERNAME>`: ban a player from the server.
+- `!backup`: backup the world.
+- `!rollback (!restore)`: rollback to a backup from a list of recent backups.
+- `!save`: Save the world.
+- `!exit`: Save and exit the world.
+- `{PREFIX}exit-nosave ({PREFIX}exit_nosave)`: Exit the world without saving.
+- `!settle`: Settle the moving water.
+- `!help`: Shows the help message.
 
 ### Other bash files
 There are the `ban_player.sh` and the `world_backup.sh` bash files that wasn't mention so far. They can be used to ban (offline) players, via `./ban_player <USERNAME>`, and the `./world_backup.sh` to manually backup the world.
 
 ## AI disclaimer
-For the stakes of transparency, I have used ChatGPT to generate me the basic skeleton of the script, and to generate me the regex syntax. Everything else was written by me.
+For the stakes of transparency, I have used ChatGPT to generate me the basic skeleton of the server controller script, the skeleton of the discord bot, and to generate me the regex syntax. Everything else was written by me.
