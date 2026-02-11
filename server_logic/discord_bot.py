@@ -133,6 +133,14 @@ def start_bot(proc):
         #exit the world
         msg = handle_commands.exit(proc)
         await ctx.send(msg)
+
+    #exit-nosave command 
+    @bot.command(aliases=["exit-nosave"])
+    @can_run_command()
+    async def exit_nosave(ctx):
+        #exit the world
+        msg = handle_commands.exit_nosave(proc)
+        await ctx.send(msg)
     
     #settle command 
     @bot.command()
@@ -153,9 +161,10 @@ def start_bot(proc):
         embed.add_field(name=f"{PREFIX}kick <USERNAME>", value="Kicks a player from the server.",inline=False)
         embed.add_field(name=f"{PREFIX}ban <USERNAME>", value="Bans a player from the server.",inline=False)
         embed.add_field(name=f"{PREFIX}backup", value="Backup up the world.",inline=False)
-        embed.add_field(name=f"{PREFIX}rollback (/restore)", value="rollback to a backup from a list of recent backups.",inline=False)
+        embed.add_field(name=f"{PREFIX}rollback ({PREFIX}restore)", value="rollback to a backup from a list of recent backups.",inline=False)
         embed.add_field(name=f"{PREFIX}save", value="Save the world.",inline=False)
         embed.add_field(name=f"{PREFIX}exit", value="Save and exit the world.",inline=False)
+        embed.add_field(name=f"{PREFIX}exit-nosave ({PREFIX}exit_nosave)", value="Exit the world without saving.",inline=False)
         embed.add_field(name=f"{PREFIX}settle", value="Settle the moving water.",inline=False)
         embed.add_field(name=f"{PREFIX}help", value="Shows the help message.",inline=False)
         

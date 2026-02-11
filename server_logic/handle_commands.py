@@ -124,6 +124,14 @@ def exit(proc):
     proc.stdin.flush()
     return msg
 
+def exit_nosave(proc):
+    #exit the server
+    msg = f"Shutting down the world now without saving!"
+    say(msg, proc)
+    proc.stdin.write(f"exit-nosave\n")
+    proc.stdin.flush()
+    return msg
+
 def settle(proc):
     #settle all of the world in the world
     proc.stdin.write(f"settle\n")
@@ -140,6 +148,7 @@ def help(proc):
     /rollback (/restore): shows the last 8 backups.
     /rollback (/restore) <NUMBER>: restore the world to the backup corresponding with the number.
     /exit: exits (and saves) the server.
+    /exit-nosave: exit the server without saving.
     /settle: settles all of the liquids in the world.
     /admin: shows this help message. 
     """

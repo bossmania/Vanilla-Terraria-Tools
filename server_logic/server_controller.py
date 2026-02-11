@@ -81,6 +81,10 @@ def command_checker(line, proc):
         if "/save" in line:
             handle_commands.save(proc)
 
+        #handle /exit-nosave command    
+        if "/exit-nosave" in line:
+            handle_commands.exit_nosave(proc)
+
         #handle /exit command    
         if "/exit" in line:
             handle_commands.exit(proc)

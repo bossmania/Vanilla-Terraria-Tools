@@ -54,6 +54,7 @@ banlist=~/admin/banlist.txt
 - `/rollback (/restore) <NUMBER>`: restore the world to the backup corresponding with the number.
 - `/save`: save the world at the current's state.
 - `/exit`: exits (and saves) the server.
+- `/exit-nosave`: exit the server without saving.
 - `/settle`: settles all of the liquids in the world.
 - `/admin:` shows this help message.
 
