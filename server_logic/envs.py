@@ -47,10 +47,13 @@ BACKUP_TIMER = 60*15
 #get the info from the .env file
 load_dotenv()
 TOKEN = os.getenv("TOKEN")
-ADMIN_ROLE_ID = int(os.getenv("ADMIN_ROLE_ID"))
-BOT_CHANNEL_ID = int(os.getenv("BOT_CHANNEL_ID"))
-CHAT_CHANNEL_ID = int(os.getenv("CHAT_CHANNEL_ID"))
-NOTIFY_CHANNEL_ID = int(os.getenv("NOTIFY_CHANNEL_ID"))
+
+#check if the discord bot is being used to get the other info
+if (len(TOKEN) > 0):
+    ADMIN_ROLE_ID = int(os.getenv("ADMIN_ROLE_ID"))
+    BOT_CHANNEL_ID = int(os.getenv("BOT_CHANNEL_ID"))
+    CHAT_CHANNEL_ID = int(os.getenv("CHAT_CHANNEL_ID"))
+    NOTIFY_CHANNEL_ID = int(os.getenv("NOTIFY_CHANNEL_ID"))
 
 def update_paths():
     #open the path files
