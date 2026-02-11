@@ -110,6 +110,7 @@ def read_output(proc):
         # print to console
         print(stamped)
 
+        #notify on discord that the server is up if it's using discord
         if USE_DISCORD and "Server started" in line:
             asyncio.run_coroutine_threadsafe(discord_bot.notify("The server has booted up!"), discord_bot.bot.loop)
 
@@ -167,8 +168,19 @@ def main():
         #wait for the server to stop before stopping the script
         code = proc.wait()
 
+        #notify on discord that the server is restarting
+        if envs.RESTARTING == True and USE_DISCORD:
+            asyncio.run_coroutine_threadsafe(discord_bot.notify("Restarting the server!"), discord_bot.bot.loop)
+
         #don't restart the sever if it sucessfully ended and it isn't set to restart
         if code == 0 and envs.RESTARTING == False:
+            #notify on discord if using it
+            if USE_DISCORD:
+                asyncio.run_coroutine_threadsafe(discord_bot.notify("Shutting down the server!"), discord_bot.bot.loop)        
+                
+                #give it time to send the msg before killing the loop
+                time.sleep(5)
+                
             break
 
 

@@ -2,7 +2,9 @@ import re
 import envs
 import logger
 import pathlib
+import asyncio
 import threading
+import discord_bot
 import offline_ban
 from os import path
 import world_controller
@@ -122,6 +124,7 @@ def exit(proc):
     say(msg, proc)
     proc.stdin.write(f"exit\n")
     proc.stdin.flush()
+    asyncio.run_coroutine_threadsafe(discord_bot.notify("Someone has shut down the server"), discord_bot.bot.loop)
     return msg
 
 def exit_nosave(proc):
@@ -130,6 +133,7 @@ def exit_nosave(proc):
     say(msg, proc)
     proc.stdin.write(f"exit-nosave\n")
     proc.stdin.flush()
+    asyncio.run_coroutine_threadsafe(discord_bot.notify("Someone has shut down the server"), discord_bot.bot.loop)
     return msg
 
 def settle(proc):
