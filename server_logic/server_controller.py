@@ -54,10 +54,13 @@ def auto_backup_world():
         #backup the world 
         timestamp = world_controller.backup_world()
         timestamp = world_controller.timestamp_cleaner(timestamp)
-        #say that it got backup in console and on discord
+        #say that it got backup in console
         msg = f"Just saved the world at {timestamp}!"
         print(msg)
-        asyncio.run_coroutine_threadsafe(discord_bot.notify(msg), discord_bot.bot.loop)
+
+        #say it on discord as well if using it
+        if USE_DISCORD:
+           asyncio.run_coroutine_threadsafe(discord_bot.notify(msg), discord_bot.bot.loop)
 
 #only use the discord bot when there is a token provided
 def use_discord_bot(proc):
