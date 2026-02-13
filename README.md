@@ -9,7 +9,7 @@ This a Terraria vanilla server wrapper where it can add additional tools to help
 	- `other.log`: logs the other info from the server's console with timestamps.
 - Multiple [/ commands](#Commands) that can be executed from within game (See step 8 of [the setup](#Setup) in order to limit the commands to only approved IPs)
 - Ban griefers who are offline. 
-- auto backup the world every 15 mins.
+- auto backup the world every 15 mins (configurable).
 - easy way to manually backup and restore the world .
 - Auto restart server if wasn't properly exited.
 - Monitor and control the server from a optional discord bot.
@@ -26,32 +26,23 @@ This a Terraria vanilla server wrapper where it can add additional tools to help
 ## Setup
 1. Download the [latest's zip file](https://github.com/bossmania/Vanilla-Terraria-Tools/releases/latest) and unzip it. 
 2. Run the `setup.sh` file to setup the folder structure 
-	- Modify the folder paths in the script beforehand if you want to change the defaults. 
-	- DON'T modify the path to the `paths.txt` file, or else the script won't work.
-3. Run the `download_server.sh` with the server version you want (without periods)
+3. Tweak the `.env` file to your preference, if needed.
+	- Note that for the `BACKUP_DURATION` field, the value should be in seconds.
+4. Run the `download_server.sh` with the server version you want (without periods)
 	- EX: `./download_server.sh 1450` to automatically download the server on version 1.4.5.0. 
-4. Run `./start_server.sh` with the server version
+5. Run `./start_server.sh` with the server version
 	- EX: `./start_server.sh 1450` to start the server on version 1.4.5.0.
-5. Create the world that you want.
-6. Stop the server via either typing in `exit`, or pressing `CTRL + C`.
-7. modify the config file for the server at `~/admin/config.txt`. Use the following as a template on what to add: *Replace `<USERNAME>` with your linux's username, and `<WORLD_NAME>` with the name of the actual world*
-```toml
-world=/home/<USERNAME>/worlds/<WORLD_NAME>.wld
-maxplayers=16
-port=7777
-password=
-motd="Welcome to this server!"
-language=en-US
-secure=0
-banlist=~/admin/banlist.txt
-```
-8. modify the `~/admin/ApprovedIPs.txt` file to be a list of IPs (separated by new line) for the people who are allowed to use the / commands. The following is an example of what it should look like.
+6. Create the world that you want.
+7. Stop the server via either typing in `exit`, or pressing `CTRL + C`.
+8. modify the config file for the server at `~/admin/config.txt`. 
+	- Replace `[USERNAME]` with the linux user's username, and `[WORLD_NAME]` with the name of the world.
+9. modify the `~/admin/approved_ips.txt` file to be a list of IPs (separated by new line) for the people who are allowed to use the / commands. The following is an example of what it should look like.
   ```
   127.0.0.1
   192.168.1.1
   10.0.0.1
   ```
-9. start the server again (`./start_server.sh`) and it should automatically use the config file to auto load the world.
+10. start the server again (`./start_server.sh`) and it should automatically use the config file to auto load the world.
 
 ## Discord Bot Setup
 0. [Setup the server wrapper](#Setup).

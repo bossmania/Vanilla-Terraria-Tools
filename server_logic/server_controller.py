@@ -147,8 +147,6 @@ def read_input(proc):
         proc.stdin.flush()
 
 def main():
-    envs.update_paths()
-
     #always restart the server unless told not to
     while True:
         envs.RESTARTING = False

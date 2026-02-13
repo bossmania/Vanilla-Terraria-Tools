@@ -1,17 +1,30 @@
 import os
 import re
-import pathlib
+from pathlib import Path
 from dotenv import load_dotenv
 
-#prepare to get the paths
-PATH_FILE = os.path.join(pathlib.Path.home(), "admin", "paths.txt")
-BANLIST = ""
-APPROVED_IP_FILE = ""
-PLAYER_LOG = ""
-CHAT_LOG = ""
-OTHER_LOG = ""
-WORLD_BACKUP_DIR = ""
-WORLD_SAVE = ""
+#get the info from the .env file
+load_dotenv()
+
+#get the path logs and replace ~ with the absolute path
+PLAYER_LOG = Path(os.getenv("PLAYER_LOGS")).expanduser()
+CHAT_LOG = Path(os.getenv("CHAT_LOGS")).expanduser()
+OTHER_LOG = Path(os.getenv("OTHER_LOGS")).expanduser()
+BANLIST = Path(os.getenv("BANLIST")).expanduser()
+APPROVED_IP_FILE = Path(os.getenv("APPROVED_IPS")).expanduser()
+WORLD_SAVE = Path(os.getenv("WORLD_SAVE")).expanduser()
+WORLD_BACKUP_DIR = Path(os.getenv("WORLD_BACKUP")).expanduser()
+
+#how often to auto backup the world
+BACKUP_TIMER = int(os.getenv("BACKUP_DURATION"))
+
+#check if the discord bot is being used to get the other info
+TOKEN = os.getenv("TOKEN")
+if (len(TOKEN) > 0):
+    ADMIN_ROLE_ID = int(os.getenv("ADMIN_ROLE_ID"))
+    BOT_CHANNEL_ID = int(os.getenv("BOT_CHANNEL_ID"))
+    CHAT_CHANNEL_ID = int(os.getenv("CHAT_CHANNEL_ID"))
+    NOTIFY_CHANNEL_ID = int(os.getenv("NOTIFY_CHANNEL_ID"))
 
 #regex filters (ChatGPT wrote them cause I'll never understand regex)
 # Match anything with <...> or : <...> in it
@@ -40,54 +53,3 @@ number_regex = re.compile(r'\d+')
 
 #tell the server to restart
 RESTARTING = False
-
-#how often to auto backup the world
-BACKUP_TIMER = 60*15
-
-#get the info from the .env file
-load_dotenv()
-TOKEN = os.getenv("TOKEN")
-
-#check if the discord bot is being used to get the other info
-if (len(TOKEN) > 0):
-    ADMIN_ROLE_ID = int(os.getenv("ADMIN_ROLE_ID"))
-    BOT_CHANNEL_ID = int(os.getenv("BOT_CHANNEL_ID"))
-    CHAT_CHANNEL_ID = int(os.getenv("CHAT_CHANNEL_ID"))
-    NOTIFY_CHANNEL_ID = int(os.getenv("NOTIFY_CHANNEL_ID"))
-
-def update_paths():
-    #open the path files
-    with open(PATH_FILE, "r", buffering=1) as path_file:
-        paths = path_file.read().splitlines()
-
-        #make sure to globaly edit the path varaibles
-        global BANLIST
-        global APPROVED_IP_FILE
-        global PLAYER_LOG
-        global CHAT_LOG
-        global OTHER_LOG
-        global WORLD_SAVE
-        global WORLD_BACKUP_DIR
-
-        for path in paths:
-            #split the path into two parts, and replace ~ with the home path
-            values = path.split("=")
-            if "~" in values[1]:
-                values[1] = values[1].replace("~", str(pathlib.Path.home()))
-
-            #update the path value based on the input given
-            match values[0]:
-                case "chat_logs":
-                    CHAT_LOG = values[1]
-                case "player_logs":
-                    PLAYER_LOG = values[1]
-                case "other_logs":
-                    OTHER_LOG = values[1]
-                case "banlist":
-                    BANLIST = values[1]
-                case "approved_IPs":
-                    APPROVED_IP_FILE = values[1]
-                case "world_save":
-                    WORLD_SAVE = values[1]
-                case "world_backup":
-                    WORLD_BACKUP_DIR = values[1]
