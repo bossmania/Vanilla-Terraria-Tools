@@ -45,11 +45,16 @@ def get_player_count(line):
         asyncio.run_coroutine_threadsafe(discord_bot.player_count(player_count), discord_bot.bot.loop)
         LAST_UPDATE_STATUS = datetime.now()
 
-#func to auto backup the world every 15 mins 
-def auto_backup_world():
+#func to auto backup the world
+def auto_backup_world(proc):
     while True:
+        #wait for the sleep to end
         time.sleep(envs.BACKUP_TIMER)
-        world_controller.backup_world()
+
+        #backup and show the time to the console
+        timestamp = world_controller.backup_world()
+        timestamp = world_controller.timestamp_cleaner(timestamp)
+        handle_commands.say(f"Just saved the world at {timestamp}!", proc)
 
 #only use the discord bot when there is a token provided
 def use_discord_bot(proc):
@@ -162,8 +167,8 @@ def main():
         threading.Thread(target=read_output, args=(proc,), daemon=True).start()
         threading.Thread(target=read_input, args=(proc,), daemon=True).start()
         threading.Thread(target=check_players, args=(proc,), daemon=True).start()
-        threading.Thread(target=auto_backup_world, daemon=True).start()
-        threading.Thread(target=use_discord_bot, args=(proc,),daemon=True).start()
+        threading.Thread(target=auto_backup_world, args=(proc,), daemon=True).start()
+        threading.Thread(target=use_discord_bot, args=(proc,), daemon=True).start()
 
         #wait for the server to stop before stopping the script
         code = proc.wait()
