@@ -34,6 +34,7 @@ This a Terraria vanilla server wrapper where it can add additional tools to help
 6. Create the world that you want.
 7. Stop the server via either typing in `exit`, or pressing `CTRL + C`.
 8. modify the config file for the server at `~/admin/config.txt`. 
+	- Delete the `#` in from of the `world` so that the server can see that option.
 	- Replace `[USERNAME]` with the linux user's username, and `[WORLD_NAME]` with the name of the world.
 9. modify the `~/admin/approved_ips.txt` file to be a list of IPs (separated by new line) for the people who are allowed to use the / commands. The following is an example of what it should look like.
   ```

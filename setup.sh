@@ -9,7 +9,7 @@ touch ~/admin/{banlist.txt,approved_ips.txt,config.txt}
 
 #generate the config template to use
 cat > ~/admin/config.txt <<EOF
-world=/home/[USERNAME]/worlds/[WORLD_NAME].wld
+#world=/home/[USERNAME]/worlds/[WORLD_NAME].wld
 maxplayers=16
 port=7777
 password=
