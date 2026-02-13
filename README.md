@@ -78,4 +78,4 @@ This a Terraria vanilla server wrapper where it can add additional tools to help
 - `!help`: Shows the help message.
 
 ## AI disclaimer
-For the stakes of transparency, I have used ChatGPT to generate me the basic skeleton of the server controller script, the skeleton of the discord bot, and to generate me the regex syntax. Everything else was written by me.
+For the stakes of transparency, I have used ChatGPT to generate me the basic skeleton of the server controller script, the skeleton of the discord bot, all the regex syntax, and the `start_server.sh` flag usage. Everything else was written by me.
