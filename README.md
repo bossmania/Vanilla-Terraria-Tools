@@ -19,9 +19,8 @@ This a Terraria vanilla server wrapper where it can add additional tools to help
 	- Notify when the server started, stopped, and restarted.
 	
 ## Dependencies
-- A Linux server (this has been only tested on Linux. Windows and Mac might work, but your mileage may vary).
+- A Linux server (this has been only tested on Linux using Ubuntu 24.04.4 LTS. Windows, Mac and other Linux distros might work, but your mileage may vary).
 - The `unzip` package.
-- Python 3.12.3+ and python3.12-venv (earlier versions may work, but your mileage may vary).
 
 ## Setup
 1. Download the [latest's zip file](https://github.com/bossmania/Vanilla-Terraria-Tools/releases/latest) and unzip it. 
@@ -52,10 +51,7 @@ This a Terraria vanilla server wrapper where it can add additional tools to help
 	- There should be three channels created.
 4. Go to User setting -> Advanced -> enable Developer mode.
 5. Right click on each of the newly created channels, Copy channel ID, and paste in into the `.env` where it belongs to.
-6. Run `python -m venv venv` to create the python venv.
-7. Run `source venv/bin/activate` to activate the venv.
-8. Run `pip install -r requirements.txt` to install the dependencies.
-9. start the server again (`./start_server.sh`) and the bot should become active.
+6. start the server again (`./start_server.sh <SERVER VERSION>`) and the bot should become active.
 
 ## Commands
 - `/kick <USERNAME>`: kicks a player from the server.
@@ -79,9 +75,6 @@ This a Terraria vanilla server wrapper where it can add additional tools to help
 - `{PREFIX}exit-nosave ({PREFIX}exit_nosave)`: Exit the world without saving.
 - `!settle`: Settle the moving water.
 - `!help`: Shows the help message.
-
-### Other bash files
-There are the `ban_player.sh` and the `world_backup.sh` bash files that wasn't mention so far. They can be used to ban (offline) players, via `./ban_player <USERNAME>`, and the `./world_backup.sh` to manually backup the world.
 
 ## AI disclaimer
 For the stakes of transparency, I have used ChatGPT to generate me the basic skeleton of the server controller script, the skeleton of the discord bot, and to generate me the regex syntax. Everything else was written by me.

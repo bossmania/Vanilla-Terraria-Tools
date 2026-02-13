@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-#basic script that will create all of the needed folders and files
+#create all of the needed folders and files
 cd ~
 mkdir worlds_backup logs config admin server_versions
 mkdir -p ~/.local/share/Terraria/Worlds
