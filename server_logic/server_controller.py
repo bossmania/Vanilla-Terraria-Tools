@@ -34,7 +34,7 @@ def get_player_count(line):
     player_count = None
     
     #check how many players are online
-    if "player connected." in line:
+    if "player connected." in line or "players connected":
         player_count = int(envs.number_regex.search(line).group())
     elif "No players connected." in line:
         player_count = 0
