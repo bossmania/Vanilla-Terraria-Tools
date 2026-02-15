@@ -28,6 +28,9 @@ BACKUP_TIMER = int(os.getenv("BACKUP_DURATION"))
 BACKUP_NOTIFY = eval(os.getenv("BACKUP_NOTIFY"))
 PLAYER_JOIN_NOTIFY = eval(os.getenv("PLAYER_JOIN_NOTIFY"))
 PLAYER_LEAVE_NOTIFY = eval(os.getenv("PLAYER_LEAVE_NOTIFY"))
+STORAGE_NOTIFY = eval(os.getenv("STORAGE_NOTIFY"))
+STORAGE_NOTIFY_THRESHOLD = int(os.getenv("STORAGE_NOTIFY_THRESHOLD"))
+STORAGE_NOTIFY_COOLDOWN = int(os.getenv("STORAGE_NOTIFY_COOLDOWN"))
 
 #regex filters (ChatGPT wrote them cause I'll never understand regex)
 # Match anything with <...> or : <...> in it

@@ -2,6 +2,7 @@ import sys
 import envs
 import time
 import logger
+import shutil
 import asyncio
 import threading
 import subprocess
@@ -24,6 +25,24 @@ def check_players(proc):
         time.sleep(PLAYER_CHECK_FREQ)
         proc.stdin.write("playing\n")
         proc.stdin.flush()
+
+def check_storage():
+    while True:
+        time.sleep(envs.STORAGE_NOTIFY_COOLDOWN)
+
+        #see how much of the storage is used
+        total, used, free = shutil.disk_usage("/")
+        percent_used = round((used / total) * 100, 1)
+
+        #check if the storage is above the threshold and shold notify
+        if percent_used > envs.STORAGE_NOTIFY_THRESHOLD and envs.STORAGE_NOTIFY:
+            
+            #get and send the message to the right place
+            msg = f"The server's storage is at {percent_used}% used. Go delete some unused backups to make space."
+            if use_discord_bot:
+                asyncio.run_coroutine_threadsafe(discord_bot.notify(msg), discord_bot.bot.loop)
+            else:
+                print(msg)
 
 def get_player_count(line):
     #get the duration of when the last time the status has been updated
@@ -189,6 +208,7 @@ def main():
         threading.Thread(target=check_players, args=(proc,), daemon=True).start()
         threading.Thread(target=auto_backup_world, daemon=True).start()
         threading.Thread(target=use_discord_bot, args=(proc,), daemon=True).start()
+        threading.Thread(target=check_storage, daemon=True).start()
 
         #wait for the server to stop before stopping the script
         code = proc.wait()
