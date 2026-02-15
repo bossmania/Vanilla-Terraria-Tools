@@ -27,6 +27,7 @@ This a Terraria vanilla server wrapper where it can add additional tools to help
 2. Run the `setup.sh` file to setup the folder structure 
 3. Tweak the `.env` file to your preference, if needed.
 	- Note that for the `BACKUP_DURATION` field, the value should be in seconds.
+	- Note that the true/false should be True/False for the tool to read it properly.
 4. Run the `download_server.sh` with the server version you want (without periods)
 	- EX: `./download_server.sh 1450` to automatically download the server on version 1.4.5.0. 
 5. Run `./start_server.sh` with the server version

@@ -45,6 +45,18 @@ def get_player_count(line):
         asyncio.run_coroutine_threadsafe(discord_bot.player_count(player_count), discord_bot.bot.loop)
         LAST_UPDATE_STATUS = datetime.now()
 
+def player_notify(line):
+    #check if player joined/left, and can notify about it
+    notify = False
+    if "has joined" in line and envs.PLAYER_JOIN_NOTIFY: 
+        notify = True
+    if "has left" in line and envs.PLAYER_LEAVE_NOTIFY:
+        notify = True
+    
+    #notify about the player joining/leaving
+    if notify:
+        asyncio.run_coroutine_threadsafe(discord_bot.notify(line.strip(": ")), discord_bot.bot.loop)
+
 #func to auto backup the world
 def auto_backup_world():
     while True:
@@ -58,8 +70,8 @@ def auto_backup_world():
         msg = f"Just saved the world at {timestamp}!"
         print(msg)
 
-        #say it on discord as well if using it
-        if USE_DISCORD:
+        #notify on discord if it is set to it
+        if USE_DISCORD and envs.BACKUP_NOTIFY:
            asyncio.run_coroutine_threadsafe(discord_bot.notify(msg), discord_bot.bot.loop)
 
 #only use the discord bot when there is a token provided
@@ -141,9 +153,13 @@ def read_output(proc):
         else:
             logger.write_log(stamped, envs.OTHER_LOG)
 
-        #attempt to get the player count for discord if using it
+        #check if discord is being used
         if USE_DISCORD:
-            get_player_count(line)
+            #notify when a player join/leave the world
+            player_notify(line)
+
+            #update the bot status with the player count
+            get_player_count(line)   
 
 
 #read the keyboard input and send it

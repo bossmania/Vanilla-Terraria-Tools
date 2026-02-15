@@ -15,9 +15,6 @@ APPROVED_IP_FILE = Path(os.getenv("APPROVED_IPS")).expanduser()
 WORLD_SAVE = Path(os.getenv("WORLD_SAVE")).expanduser()
 WORLD_BACKUP_DIR = Path(os.getenv("WORLD_BACKUP")).expanduser()
 
-#how often to auto backup the world
-BACKUP_TIMER = int(os.getenv("BACKUP_DURATION"))
-
 #check if the discord bot is being used to get the other info
 TOKEN = os.getenv("TOKEN")
 if (len(TOKEN) > 0):
@@ -25,6 +22,12 @@ if (len(TOKEN) > 0):
     BOT_CHANNEL_ID = int(os.getenv("BOT_CHANNEL_ID"))
     CHAT_CHANNEL_ID = int(os.getenv("CHAT_CHANNEL_ID"))
     NOTIFY_CHANNEL_ID = int(os.getenv("NOTIFY_CHANNEL_ID"))
+
+#get the server settings
+BACKUP_TIMER = int(os.getenv("BACKUP_DURATION"))
+BACKUP_NOTIFY = eval(os.getenv("BACKUP_NOTIFY"))
+PLAYER_JOIN_NOTIFY = eval(os.getenv("PLAYER_JOIN_NOTIFY"))
+PLAYER_LEAVE_NOTIFY = eval(os.getenv("PLAYER_LEAVE_NOTIFY"))
 
 #regex filters (ChatGPT wrote them cause I'll never understand regex)
 # Match anything with <...> or : <...> in it
