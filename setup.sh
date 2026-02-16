@@ -16,5 +16,4 @@ password=
 motd="Welcome to this server!"
 language=en-US
 secure=0
-banlist=~/admin/banlist.txt
 EOF
