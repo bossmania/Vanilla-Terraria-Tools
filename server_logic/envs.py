@@ -49,7 +49,7 @@ ban_regex = re.compile(r".*/ban\s+")
 user_regex = re.compile(r"(?<=<)[^<>]+(?=>)")
 
 #filter for only the username and IP
-user_IP_regex = re.compile(r':?\s*([^\s(]+)\s*\((\d{1,3}(?:\.\d{1,3}){3}):\d{1,5}\)')
+user_IP_regex = re.compile(r':?\s*(.*?)\s*\((\d{1,3}(?:\.\d{1,3}){3}):\d{1,5}\)')
 
 #filter for the username and IP inside []
 User_IP_log_regex = re.compile(r'^(.+?)\s*\[(\d{1,3}(?:\.\d{1,3}){3})\]$')
