@@ -106,6 +106,10 @@ def use_discord_bot(proc):
 def command_checker(line, proc):
     #check if the player has permission to run commands
     if handle_commands.check_if_allowed(envs.PLAYER_LOG, line):
+        
+        #lowercase the command line for auto caps
+        line = line.lower()
+
         #handle /kick command
         if "/kick" in line:
             handle_commands.kick(line, proc)
