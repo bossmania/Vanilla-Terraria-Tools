@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 #check if the server should restart
 RESTART = False
 
+#list of online players
+ONLINE = []
 
 #get the info from the .env file
 load_dotenv()

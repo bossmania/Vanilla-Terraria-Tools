@@ -13,6 +13,9 @@ def control_output(line, proc):
     #check if the output was a command
     command_checker(line, proc)
 
+    #get the list of online players
+    get_online_players(line)
+
 def organize_log_messages(line, stamped, proc):
     #log the player's IP
     if envs.IP_regex.search(line):
@@ -26,6 +29,18 @@ def organize_log_messages(line, stamped, proc):
     #log everything else
     else:
         logger.write_log(stamped, envs.OTHER_LOG)
+
+def get_online_players(line):
+    #filter the line and check if it's valid 
+    result = envs.user_IP_regex.search(line)
+    if not result:
+        return None
+
+    #get the username
+    username, _ = result.groups()
+
+    #add the username to the online list
+    envs.ONLINE.append(username)
 
 def check_user_permission(line):
     #get the user and prep the IP search

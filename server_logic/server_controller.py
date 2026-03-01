@@ -9,12 +9,13 @@ import output_controller
 #store the server binary location with args
 SERVER_CMD = sys.argv[1:]
 
-#check the amount of players every few seconds
+#check the amount of players every few seconds and clear the online list
 def check_players(proc):
     while True:
         time.sleep(envs.PLAYER_CHECK_FREQ)
         proc.stdin.write("playing\n")
         proc.stdin.flush()
+        envs.ONLINE = []
 
 #func to read the user's input
 def read_input(proc):
