@@ -54,8 +54,6 @@ async def start_server():
     #restart the server if it crash
     if code != 0:
         envs.RESTART = True
-    else:
-        envs.RESTART = False
 
 
 #run the server forever unless told not to

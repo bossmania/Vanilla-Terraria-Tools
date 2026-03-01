@@ -1,6 +1,6 @@
 import envs
 import logger
-import server_commands
+from commands import server_commands
 
 def control_output(line, proc):
     #timestamp the stdout line and print it
@@ -94,3 +94,31 @@ def command_checker(line, proc):
         #/ban command
         if "/ban" in line:
             server_commands.ban(line, proc)
+
+        #/backup command
+        if "/backup" in line:
+            server_commands.backup(proc)
+
+        #/restore (or /rollback) command
+        if "/restore" in line or "/rollback" in line:
+            server_commands.restore(line, proc)
+
+        #/save command
+        if "/save" in line:
+            server_commands.save(proc)
+
+        #/exit-nosave command    
+        if "/exit-nosave" in line:
+            server_commands.exit_nosave(proc)
+
+        #/exit command    
+        if "/exit" in line:
+            server_commands.exit(proc)
+
+        #/settle command    
+        if "/settle" in line:
+            server_commands.settle(proc)
+
+        #/admin command
+        if "/admin" in line:
+            server_commands.help(proc)
