@@ -1,11 +1,20 @@
 import sys
 import envs
+import time
 import asyncio
 import threading
 import subprocess
+import output_controller
 
 #store the server binary location with args
 SERVER_CMD = sys.argv[1:]
+
+#check the amount of players every few seconds
+def check_players(proc):
+    while True:
+        time.sleep(envs.PLAYER_CHECK_FREQ)
+        proc.stdin.write("playing\n")
+        proc.stdin.flush()
 
 #func to read the user's input
 def read_input(proc):
@@ -16,8 +25,11 @@ def read_input(proc):
 #func to read the user's output
 def read_output(proc):
     for raw in proc.stdout:
-        line = raw.strip("\n")
-        print(line)
+        #clean up the line
+        line = raw.rstrip("\n")
+
+        #control what happens based on the output
+        output_controller.control_output(line, proc)
 
 
 async def start_server():
@@ -34,6 +46,7 @@ async def start_server():
     #read the server's input and output 
     threading.Thread(target=read_output, args=(proc,), daemon=True).start()
     threading.Thread(target=read_input, args=(proc,), daemon=True).start()
+    threading.Thread(target=check_players, args=(proc,), daemon=True).start()
 
     code = proc.wait()
 
