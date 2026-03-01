@@ -1,5 +1,6 @@
 import envs
 import logger
+import offline_ban
 
 #wrapper function to easily say a message in the game chat
 def say(msg, proc):
@@ -29,3 +30,17 @@ def kick(line, proc):
         say(msg, proc)
         return msg 
     
+def ban(line, proc):
+    #get the username
+    user = envs.ban_regex.sub("", line)
+
+    #banned the player
+    msg = offline_ban.ban_player(user)
+
+    #kick them from the server in order for them to get banned
+    proc.stdin.write(f"kick {user}\n")
+
+    #say that they got kicked
+    say(msg, proc)
+
+    return msg

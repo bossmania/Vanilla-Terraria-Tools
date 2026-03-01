@@ -87,6 +87,10 @@ def command_checker(line, proc):
         #lowercase the command line for auto caps
         line = line.lower()
 
-        #handle /kick command
+        #/kick command
         if "/kick" in line:
             server_commands.kick(line, proc)
+        
+        #/ban command
+        if "/ban" in line:
+            server_commands.ban(line, proc)
