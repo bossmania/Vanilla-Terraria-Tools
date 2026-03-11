@@ -1,3 +1,4 @@
+import os
 import sys
 import envs
 import time
@@ -8,9 +9,29 @@ from commands import world_controller
 
 #func to read the user's input
 def read_input(proc):
-    for line in sys.stdin:
-        proc.stdin.write(line)
-        proc.stdin.flush()
+    #add itself to the threads list
+    envs.RUNNING_THREADS.append("read_input")
+
+    # dont wait for a stdin input
+    os.set_blocking(sys.stdin.fileno(), False)
+    
+    #infinite loop
+    while True:
+        try:
+            #stop when told so
+            if envs.STOP_THREADS:
+                envs.RUNNING_THREADS.remove("read_input")
+                return
+
+            #get the line and send it to the proc
+            line = sys.stdin.readline()
+            if line:
+                proc.stdin.write(line)
+                proc.stdin.flush()
+        
+        #theres no data yet, so try again
+        except BlockingIOError:
+            time.sleep(0.05)
 
 #func to read the user's output
 def read_output(proc):
@@ -25,8 +46,19 @@ def read_output(proc):
 
 #check the amount of players every few seconds and clear the online list
 def check_players(proc):
+    #add itself to the running thread list
+    envs.RUNNING_THREADS.append("check_players")
     while True:
-        time.sleep(envs.PLAYER_CHECK_FREQ)
+        #check every 0.1 seconds for if the thread should die
+        for _ in range(envs.PLAYER_CHECK_FREQ * 10):
+            #remove itself from the list and stop running when told so
+            if envs.STOP_THREADS:
+                envs.RUNNING_THREADS.remove("check_players")
+                return
+
+            time.sleep(0.1)
+
+        #get the player list and reset the online queue
         proc.stdin.write("playing\n")
         proc.stdin.flush()
         envs.ONLINE = []

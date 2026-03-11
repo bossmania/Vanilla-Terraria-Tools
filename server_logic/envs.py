@@ -6,6 +6,9 @@ from dotenv import load_dotenv
 #check if the server should restart
 RESTART = False
 
+STOP_THREADS = False
+RUNNING_THREADS = []
+
 #list of online players
 ONLINE = []
 
