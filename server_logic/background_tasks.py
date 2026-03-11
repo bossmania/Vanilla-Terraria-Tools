@@ -38,7 +38,7 @@ def read_output(proc):
     for raw in proc.stdout:
         #clean up the line
         line = raw.rstrip("\n")
-        line = line.replace(": ", "")
+        line = line.removeprefix(": ")
 
         #control what happens based on the output
         output_controller.control_output(line, proc)
