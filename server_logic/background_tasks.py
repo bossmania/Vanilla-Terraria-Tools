@@ -63,6 +63,40 @@ def check_players(proc):
         proc.stdin.flush()
         envs.ONLINE = []
 
+def flush_logs():
+    envs.PLAYER_LOG.flush()
+    envs.CHAT_LOG.flush()
+    envs.OTHER_LOG.flush()
+    envs.BANLIST.flush()
+    envs.APPROVED_IP.flush()
+
+def flush_logs_timer():
+    #add itself to the running thread list
+    envs.RUNNING_THREADS.append("flush_logs")
+
+    #prep the flushing countdown
+    FLUSH_TIMER_MAX = 180
+    flush_timer = FLUSH_TIMER_MAX
+
+    while True:
+        #flush the current buffer and stop the thread
+        if envs.STOP_THREADS:
+            envs.RUNNING_THREADS.remove("flush_logs")
+            flush_logs()
+            return
+
+        #flush the current buffer and reset the countdown
+        if flush_timer <= 0:
+            flush_logs()
+            flush_timer = FLUSH_TIMER_MAX
+        else:
+            #countdown if the world isnt currently saving
+            if not envs.CURRENTLY_SAVING:
+                flush_timer -= 1
+
+        #wait a second
+        time.sleep(1)
+
 #func to auto backup the world
 def auto_backup_world():
     #prep the backup timer

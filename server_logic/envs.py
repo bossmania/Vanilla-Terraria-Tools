@@ -6,23 +6,35 @@ from dotenv import load_dotenv
 #check if the server should restart
 RESTART = False
 
+#check if the threads should be stooped
 STOP_THREADS = False
 RUNNING_THREADS = []
 
 #list of online players
 ONLINE = []
 
+CURRENTLY_SAVING = False
+
 #get the info from the .env file
 load_dotenv()
 
-#get the path logs and replace ~ with the absolute path
-PLAYER_LOG = Path(os.getenv("PLAYER_LOGS")).expanduser()
-CHAT_LOG = Path(os.getenv("CHAT_LOGS")).expanduser()
-OTHER_LOG = Path(os.getenv("OTHER_LOGS")).expanduser()
-BANLIST = Path(os.getenv("BANLIST")).expanduser()
-APPROVED_IP_FILE = Path(os.getenv("APPROVED_IPS")).expanduser()
+#get the path logs
+PLAYER_LOG_PATH = Path(os.getenv("PLAYER_LOGS")).expanduser()
+CHAT_LOG_PATH = Path(os.getenv("CHAT_LOGS")).expanduser()
+OTHER_LOG_PATH = Path(os.getenv("OTHER_LOGS")).expanduser()
+
+#replace ~ with the absolute path
+BANLIST_PATH = Path(os.getenv("BANLIST")).expanduser()
+APPROVED_IP_PATH = Path(os.getenv("APPROVED_IPS")).expanduser()
 WORLD_SAVE = Path(os.getenv("WORLD_SAVE")).expanduser()
 WORLD_BACKUP_DIR = Path(os.getenv("WORLD_BACKUP")).expanduser()
+
+#open the files needed
+PLAYER_LOG = open(PLAYER_LOG_PATH, "a+", buffering=1)
+CHAT_LOG = open(CHAT_LOG_PATH, "a+", buffering=1)
+OTHER_LOG = open(OTHER_LOG_PATH, "a+", buffering=1)
+BANLIST = open(BANLIST_PATH, "a+", buffering=1)
+APPROVED_IP = open(APPROVED_IP_PATH, "r", buffering=1)
 
 #get the server settings
 PLAYER_JOIN_NOTIFY = eval(os.getenv("PLAYER_JOIN_NOTIFY"))

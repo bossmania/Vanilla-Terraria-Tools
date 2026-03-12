@@ -1,6 +1,7 @@
 import sys
 import envs
 import time
+import logger
 import threading
 import subprocess
 import background_tasks
@@ -29,6 +30,7 @@ def start_server():
     threading.Thread(target=background_tasks.check_players, args=(proc,), daemon=True).start()
     threading.Thread(target=background_tasks.auto_backup_world, daemon=True).start()
     threading.Thread(target=background_tasks.check_storage, daemon=True).start()
+    threading.Thread(target=background_tasks.flush_logs_timer, daemon=True).start()
 
     #wait for the process to finish and get the exit code
     code = proc.wait()
@@ -48,5 +50,12 @@ def start_server():
 while True:
     start_server()
 
+    #stop the server when not restarting it
     if not envs.RESTART:
+        #close all of the open files
+        envs.PLAYER_LOG.close()
+        envs.CHAT_LOG.close()
+        envs.OTHER_LOG.close()
+        envs.BANLIST.close()
+        envs.APPROVED_IP.close()
         break

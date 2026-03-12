@@ -16,6 +16,9 @@ def control_output(line, proc):
     #get the list of online players
     get_online_players(line)
 
+    #check if the world is currently saving
+    check_if_saving(line)
+
 def organize_log_messages(line, stamped, proc):
     #log the player's IP
     if envs.IP_regex.search(line):
@@ -42,44 +45,52 @@ def get_online_players(line):
     #add the username to the online list
     envs.ONLINE.append(username)
 
+#func to check if the world is currently saving
+def check_if_saving(line):
+    if "Saving world data:" in line:
+        envs.CURRENTLY_SAVING = True
+    elif "Backing up world file" in line:
+        envs.CURRENTLY_SAVING = False
+
 def check_user_permission(line):
     #get the user and prep the IP search
     results = envs.user_regex.search(line)
 
+    #get the user if it's valid
     if not results:
         return
-
     talked_user = results.group()
-    IPs = []
     
-    #open the player list and get all of the players
-    with open(envs.PLAYER_LOG, "r", buffering=1) as player_log:
-        players = player_log.read().splitlines()
+    IPs = []
 
-        for player in players:
-            #get the username & IP for that player
-            results = envs.User_IP_log_regex.search(player)
-            if not results:
-                raise Exception("The player file is not formatted properly!")
-            
-            #save the IP if the current user is the talked user
-            user, IP = results.groups()
-            if user == talked_user:
-                IPs.append(IP)
+    #get the list of players
+    envs.PLAYER_LOG.seek(0)
+    players = envs.PLAYER_LOG.read().splitlines()
+
+    for player in players:
+        #get the username & IP for that player
+        results = envs.User_IP_log_regex.search(player)
+        if not results:
+            raise Exception("The player file is not formatted properly!")
+        
+        #save the IP if the current user is the talked user
+        user, IP = results.groups()
+        if user == talked_user:
+            IPs.append(IP)
 
     #get all of the approved IPs
-    with open(envs.APPROVED_IP_FILE, "r", buffering=1) as IP_log:
-        approved_IPs = IP_log.read().splitlines()
+    envs.APPROVED_IP.seek(0)
+    approved_IPs = envs.APPROVED_IP.read().splitlines()
 
-        #go through each approved IP, and the IPs match by the chatter
-        for approved_IP in approved_IPs:
-            for IP in IPs:
-                #stop if the IP is in the approved list
-                if IP == approved_IP:
-                    return True
+    #go through each approved IP, and the IPs match by the chatter
+    for approved_IP in approved_IPs:
+        for IP in IPs:
+            #stop if the IP is in the approved list
+            if IP == approved_IP:
+                return True
 
-        #if the IP wasn't found in the list, then return false    
-        return False
+    #if the IP wasn't found in the list, then return false    
+    return False
 
 def command_checker(line, proc):
     #check if the player has permission to run commands

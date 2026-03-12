@@ -5,54 +5,52 @@ import envs
 
 #func to check if the player has even joined the server before
 def check_if_ever_joined(banned_player):
-    #open the player list and get all of the players
-    with open(envs.PLAYER_LOG, "r", buffering=1) as player_log:
-        players = player_log.read().splitlines()
+    #get all of the players
+    envs.PLAYER_LOG.seek(0)
+    players = envs.PLAYER_LOG.read().splitlines()
 
-        for player in players:
-            #get the username & IP for that player
-            results = envs.User_IP_log_regex.search(player)
-            if not results:
-                raise Exception("The player file is not formatted properly!")
-            
-            #stop when founed the player in the list
-            user, IP = results.groups()
-            if user.lower() == banned_player.lower():
-                return True
+    for player in players:
+        #get the username & IP for that player
+        results = envs.User_IP_log_regex.search(player)
+        if not results:
+            raise Exception("The player file is not formatted properly!")
+        
+        #stop when founed the player in the list
+        user, IP = results.groups()
+        if user.lower() == banned_player.lower():
+            return True
     
     #inform that the player can't be found
     return False
 
 def get_ips(banned_player, IPs):
-    #open the player list and get all of the players
-    with open(envs.PLAYER_LOG, "r", buffering=1) as player_log:
-        players = player_log.read().splitlines()
+    #get all of the players
+    envs.PLAYER_LOG.seek(0)
+    players = envs.PLAYER_LOG.read().splitlines()
 
-        for player in players:
-            #get the username & IP for that player
-            results = envs.User_IP_log_regex.search(player)
-            if not results:
-                raise Exception("The player file is not formatted properly!")
-            
-            #save the IP if the current user is the bad guy
-            user, IP = results.groups()
-            if user.lower() == banned_player.lower():
-                IPs.append(IP)
+    for player in players:
+        #get the username & IP for that player
+        results = envs.User_IP_log_regex.search(player)
+        if not results:
+            raise Exception("The player file is not formatted properly!")
+        
+        #save the IP if the current user is the bad guy
+        user, IP = results.groups()
+        if user.lower() == banned_player.lower():
+            IPs.append(IP)
 
     return IPs
     
 def clean_IP_list(IPs):
-    #open the ban filistle if it exists
-    if os.path.isfile(envs.BANLIST):
-        with open(envs.BANLIST, "r", buffering=1) as ban_log:
-            #read all of the lines in there
-            lines = ban_log.read().splitlines()
+    #read all of the lines in there
+    envs.BANLIST.seek(0)
+    lines = envs.BANLIST.read().splitlines()
 
-            #if a IP is already in the ban list, then remove it from the list
-            for line in lines:
-                for IP in IPs:
-                    if line == IP:
-                        IPs.remove(IP)
+    #if a IP is already in the ban list, then remove it from the list
+    for line in lines:
+        for IP in IPs:
+            if line == IP:
+                IPs.remove(IP)
 
     #removed duplicated IPs from the list
     IPs = (set(IPs))
@@ -60,18 +58,15 @@ def clean_IP_list(IPs):
     return IPs
 
 def update_ban_list(banned_player, IPs):
-    #open the ban list
-    with open(envs.BANLIST, "a", buffering=1) as ban_log:
-        #format the ban text for every IP
-        for IP in IPs:
-            output = (
-                f"//{banned_player}\n"
-                f"{IP}\n"
-            )
+    #format the ban text for every IP
+    for IP in IPs:
+        output = (
+            f"//{banned_player}\n"
+            f"{IP}\n"
+        )
 
-            #write the ban list
-            ban_log.write(output + "\n")
-            ban_log.flush()
+        #write the ban list
+        envs.BANLIST.write(output + "\n")
     
     #return the banning response
     if len(IPs) > 0:

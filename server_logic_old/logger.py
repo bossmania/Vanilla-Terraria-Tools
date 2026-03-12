@@ -29,14 +29,12 @@ def write_log(line, log):
 
 #save the player to the player log if needed
 def write_player(line):
-    with open(envs.PLAYER_LOG, "a", buffering=1) as logfile:
-        #format the line and check if they're not in the log
-        formated_player = format_user_ip(line)
-        if not player_in_log(formated_player):
+    #format the line and check if they're not in the log
+    formated_player = format_user_ip(line)
+    if not player_in_log(formated_player):
 
-            #write to the log
-            logfile.write(formated_player  + "\n")
-            logfile.flush()
+        #write to the log
+        envs.PLAYER_LOG.write(formated_player  + "\n")
 
 #check if the player is already in the log to prevent spam 
 def player_in_log(person):

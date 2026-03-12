@@ -22,27 +22,24 @@ def format_user_ip(line):
     return f"{username} [{ip}]"
 
 #write to the a log file
-def write_log(line, log):
-    with open(log, "a", buffering=1) as logfile:
-        logfile.write(line  + "\n")
-        logfile.flush()
+def write_log(line, logfile):
+        if logfile != None:
+            logfile.write(line  + "\n")
 
 #save the player to the player log if needed
 def write_player(line):
-    with open(envs.PLAYER_LOG, "a", buffering=1) as logfile:
-        #format the line and check if they're not in the log
-        formated_player = format_user_ip(line)
-        if not player_in_log(formated_player):
+    #format the line and check if they're not in the log
+    formated_player = format_user_ip(line)
+    if not player_in_log(formated_player):
 
-            #write to the log
-            logfile.write(formated_player  + "\n")
-            logfile.flush()
+        #write to the log
+        write_log(formated_player, envs.PLAYER_LOG)
 
 #check if the player is already in the log to prevent spam 
 def player_in_log(person):
-    with open(envs.PLAYER_LOG, "r", buffering=1) as logfile:
         #get the players from the file
-        players = logfile.read().splitlines()
+        envs.PLAYER_LOG.seek(0)
+        players = envs.PLAYER_LOG.read().splitlines()
         for player in players:
 
             #check if the player is in the list
