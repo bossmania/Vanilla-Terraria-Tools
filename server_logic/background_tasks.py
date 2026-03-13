@@ -145,7 +145,7 @@ def check_storage():
 
 def start_bot(proc):
     #run the discord bot if a token was provided
-    if (len(envs.TOKEN) > 0):
+    if len(envs.TOKEN) > 0:
         envs.BOT = discord_bot.discord_bot_manager(proc)
     
         #create the discord bot

@@ -6,12 +6,14 @@ import asyncio
 import threading
 import subprocess
 import background_tasks
+from discord_bot import discord_bot_notify
 
 #store the server binary location with args
 SERVER_CMD = sys.argv[1:]
 
 def start_server():
-    #reset the values for stopping threads
+    #reset the values
+    envs.RESTART = False
     envs.STOP_THREADS = False
     envs.RUNNING_THREADS = []
 
@@ -41,8 +43,12 @@ def start_server():
     if code != 0:
         envs.RESTART = True
 
+    #notify of a server restart on discord, if using it
+    if envs.RESTART and len(envs.TOKEN) > 0:
+        asyncio.run_coroutine_threadsafe(discord_bot_notify.notify("Restarting the server!"), envs.BOT.bot.loop)
+
     #stop the discord bot, if running one
-    if (len(envs.TOKEN) > 0):
+    if len(envs.TOKEN) > 0:
         envs.BOT.stop_bot()
 
     #stop the threads

@@ -3,8 +3,7 @@ import logger
 import discord
 import asyncio
 from discord.ext import commands
-from discord_bot import discord_bot_misc
-from discord_bot import discord_server_commands
+from discord_bot import discord_bot_notify, discord_server_commands
 
 def can_run_command(ctx):
     #check if the user has the admin role and is in the right channel
@@ -31,14 +30,13 @@ class discord_bot_manager:
         self.bot = commands.Bot(command_prefix=self.PREFIX, intents=intents)
         self.bot.help_command = None
 
-
-    def set_bot_commands(self):
+        #set up the discord bot hooks
         discord_server_commands.initalize(self, self.bot, self.proc)
-        discord_bot_misc.initalize(self.bot)
-        
+        discord_bot_notify.initalize(self.bot)
+
     def start_bot(self):
+        #prepare the bot
         self.initalize_bot()
-        self.set_bot_commands()
 
         #add the bot to the thread list
         envs.RUNNING_THREADS.append("discord_bot")

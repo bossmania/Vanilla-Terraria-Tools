@@ -1,6 +1,8 @@
 import envs
 import logger
+import asyncio
 from commands import server_commands
+from discord_bot import discord_bot_notify
 
 def control_output(line, proc):
     #timestamp the stdout line and print it
@@ -19,6 +21,9 @@ def control_output(line, proc):
     #check if the world is currently saving
     check_if_saving(line)
 
+    #function to check the world status
+    check_world_status(line)
+
 def organize_log_messages(line, stamped, proc):
     #log the player's IP
     if envs.IP_regex.search(line):
@@ -28,6 +33,10 @@ def organize_log_messages(line, stamped, proc):
     elif envs.chat_regex.search(line):
         #log the chat message
         logger.write_log(stamped, envs.CHAT_LOG)
+
+        #send the chat message to discord if using it
+        if len(envs.TOKEN) > 0:
+            asyncio.run_coroutine_threadsafe(discord_bot_notify.chat_log(line), envs.BOT.bot.loop)
 
     #log everything else
     else:
@@ -51,6 +60,11 @@ def check_if_saving(line):
         envs.CURRENTLY_SAVING = True
     elif "Backing up world file" in line:
         envs.CURRENTLY_SAVING = False
+
+def check_world_status(line):
+    #notify on discord that the server is up if it's using discord
+        if len(envs.TOKEN) > 0 and "Server started" in line:
+            asyncio.run_coroutine_threadsafe(discord_bot_notify.notify("The server has booted up!"), envs.BOT.bot.loop)
 
 def check_user_permission(line):
     #get the user and prep the IP search
@@ -103,33 +117,33 @@ def command_checker(line, proc):
             server_commands.kick(line, proc)
         
         #/ban command
-        if "/ban" in line:
+        elif "/ban" in line:
             server_commands.ban(line, proc)
 
         #/backup command
-        if "/backup" in line:
+        elif "/backup" in line:
             server_commands.backup(proc)
 
         #/restore (or /rollback) command
-        if "/restore" in line or "/rollback" in line:
+        elif "/restore" in line or "/rollback" in line:
             server_commands.restore(line, proc)
 
-        #/save command
-        if "/save" in line:
-            server_commands.save(proc)
-
         #/exit-nosave command    
-        if "/exit-nosave" in line:
+        elif "/exit-nosave" in line:
             server_commands.exit_nosave(proc)
 
+        #/save command
+        elif "/save" in line:
+            server_commands.save(proc)
+
         #/exit command    
-        if "/exit" in line:
+        elif "/exit" in line:
             server_commands.exit(proc)
 
         #/settle command    
-        if "/settle" in line:
+        elif "/settle" in line:
             server_commands.settle(proc)
 
         #/admin command
-        if "/admin" in line:
+        elif "/admin" in line:
             server_commands.help(proc)

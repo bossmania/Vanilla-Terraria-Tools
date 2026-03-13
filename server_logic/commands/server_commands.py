@@ -1,5 +1,7 @@
 import envs
 import logger
+import asyncio
+from discord_bot import discord_bot_notify
 from commands import offline_ban, world_controller
 
 #wrapper function to easily say a message in the game chat
@@ -88,6 +90,11 @@ def exit(proc):
     #exit the server
     msg = f"Shutting down the world now!"
     say(msg, proc)
+
+    #notify that the world is exiting on discord, if using it
+    if len(envs.TOKEN) > 0:
+        asyncio.run_coroutine_threadsafe(discord_bot_notify.notify(msg), envs.BOT.bot.loop)
+
     proc.stdin.write(f"exit\n")
     proc.stdin.flush()
     return msg
@@ -96,6 +103,11 @@ def exit_nosave(proc):
     #exit the server
     msg = f"Shutting down the world now without saving!"
     say(msg, proc)
+
+    #notify that the world is exiting on discord, if using it
+    if len(envs.TOKEN) > 0:
+        asyncio.run_coroutine_threadsafe(discord_bot_notify.notify(msg), envs.BOT.bot.loop)
+
     proc.stdin.write(f"exit-nosave\n")
     proc.stdin.flush()
     return msg
