@@ -37,6 +37,7 @@ BANLIST = open(BANLIST_PATH, "a+", buffering=1)
 APPROVED_IP = open(APPROVED_IP_PATH, "r", buffering=1)
 
 #check if the discord bot is being used to get the other info
+BOT = None
 TOKEN = os.getenv("TOKEN")
 if (len(TOKEN) > 0):
     ADMIN_ROLE_ID = int(os.getenv("ADMIN_ROLE_ID"))

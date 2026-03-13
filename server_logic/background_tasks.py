@@ -143,7 +143,10 @@ def check_storage():
             msg = f"The server's storage is at {percent_used}% used. Go delete some unused backups to make space."
             print(msg)
 
-#run the discord bot if a token was provided
 def start_bot(proc):
+    #run the discord bot if a token was provided
     if (len(envs.TOKEN) > 0):
-        discord_bot.start_bot(proc)
+        envs.BOT = discord_bot.discord_bot_manager(proc)
+    
+        #create the discord bot
+        envs.BOT.start_bot()

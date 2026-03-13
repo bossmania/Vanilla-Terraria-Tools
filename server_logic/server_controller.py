@@ -6,7 +6,6 @@ import asyncio
 import threading
 import subprocess
 import background_tasks
-from discord_bot import discord_bot
 
 #store the server binary location with args
 SERVER_CMD = sys.argv[1:]
@@ -39,18 +38,18 @@ def start_server():
     code = proc.wait()
 
     #restart the server if it crash
-    if code == 0:
+    if code != 0:
         envs.RESTART = True
 
     #stop the discord bot, if running one
     if (len(envs.TOKEN) > 0):
-        asyncio.run_coroutine_threadsafe(discord_bot.bot.close(), discord_bot.bot.loop)
+        envs.BOT.stop_bot()
 
     #stop the threads
     envs.STOP_THREADS = True
 
     #wait for all of the threads to stop
-    print ("Stoppping the server and all of the background tasks. Please wait a moment!")
+    print (logger.timestamp("Stoppping the server and all of the background tasks. Please wait a moment!"))
     while len(envs.RUNNING_THREADS) > 0:
         print(f"The {envs.RUNNING_THREADS} are still alive!")
         time.sleep(0.1)
