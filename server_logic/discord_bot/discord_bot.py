@@ -3,44 +3,39 @@ import logger
 import discord
 import asyncio
 from discord.ext import commands
-from commands import server_commands
+from discord_bot import discord_bot_misc
+from discord_bot import discord_server_commands
+
+def can_run_command(ctx):
+    #check if the user has the admin role and is in the right channel
+    for role in ctx.author.roles:
+        if role.id == envs.ADMIN_ROLE_ID and ctx.channel.id == envs.BOT_CHANNEL_ID:
+            return True
+
+    #return false if they can't run the command
+    return False
 
 class discord_bot_manager:
     def __init__(self, proc):
         self.proc = proc
         self.bot = None
+        self.PREFIX = "!"
 
     def initalize_bot(self):
-        #set the prefix used
-        PREFIX = "!"
-
         # set the discrod bot to have default permission and the ability to read messages and see member info
         intents = discord.Intents.default()
         intents.message_content = True
         intents.members = True
 
         #create the bot client and disable the built in help command
-        self.bot = commands.Bot(command_prefix=PREFIX, intents=intents)
+        self.bot = commands.Bot(command_prefix=self.PREFIX, intents=intents)
         self.bot.help_command = None
 
+
     def set_bot_commands(self):
-        #kick command 
-        @self.bot.command()
-        async def kick(ctx, user=None):
-            #stop if there was no username provided
-            if user == None or user == "":
-                await ctx.send("Please enter in a username!")
-                return
-
-            #kick the player and say that they're kicked
-            msg = server_commands.kick(user, self.proc)
-            await ctx.send(msg)
-
-        #say when the bot is online
-        @self.bot.event
-        async def on_ready():
-            print(logger.timestamp(f"Logged in as {self.bot.user}"))
-
+        discord_server_commands.initalize(self, self.bot, self.proc)
+        discord_bot_misc.initalize(self.bot)
+        
     def start_bot(self):
         self.initalize_bot()
         self.set_bot_commands()
