@@ -36,6 +36,14 @@ OTHER_LOG = open(OTHER_LOG_PATH, "a+", buffering=1)
 BANLIST = open(BANLIST_PATH, "a+", buffering=1)
 APPROVED_IP = open(APPROVED_IP_PATH, "r", buffering=1)
 
+#check if the discord bot is being used to get the other info
+TOKEN = os.getenv("TOKEN")
+if (len(TOKEN) > 0):
+    ADMIN_ROLE_ID = int(os.getenv("ADMIN_ROLE_ID"))
+    BOT_CHANNEL_ID = int(os.getenv("BOT_CHANNEL_ID"))
+    CHAT_CHANNEL_ID = int(os.getenv("CHAT_CHANNEL_ID"))
+    NOTIFY_CHANNEL_ID = int(os.getenv("NOTIFY_CHANNEL_ID"))
+
 #get the server settings
 PLAYER_JOIN_NOTIFY = eval(os.getenv("PLAYER_JOIN_NOTIFY"))
 PLAYER_LEAVE_NOTIFY = eval(os.getenv("PLAYER_LEAVE_NOTIFY"))

@@ -5,6 +5,7 @@ import time
 import shutil
 import logger
 import output_controller
+from discord_bot import discord_bot
 from commands import world_controller
 
 #func to read the user's input
@@ -72,16 +73,16 @@ def flush_logs():
 
 def flush_logs_timer():
     #add itself to the running thread list
-    envs.RUNNING_THREADS.append("flush_logs")
+    envs.RUNNING_THREADS.append("flush_logs_timer")
 
     #prep the flushing countdown
-    FLUSH_TIMER_MAX = 180
+    FLUSH_TIMER_MAX = 180 * 10
     flush_timer = FLUSH_TIMER_MAX
 
     while True:
         #flush the current buffer and stop the thread
         if envs.STOP_THREADS:
-            envs.RUNNING_THREADS.remove("flush_logs")
+            envs.RUNNING_THREADS.remove("flush_logs_timer")
             flush_logs()
             return
 
@@ -94,8 +95,8 @@ def flush_logs_timer():
             if not envs.CURRENTLY_SAVING:
                 flush_timer -= 1
 
-        #wait a second
-        time.sleep(1)
+        #wait 1/10th of a second
+        time.sleep(0.1)
 
 #func to auto backup the world
 def auto_backup_world():
@@ -141,3 +142,8 @@ def check_storage():
             #get and send the message to the right place
             msg = f"The server's storage is at {percent_used}% used. Go delete some unused backups to make space."
             print(msg)
+
+#run the discord bot if a token was provided
+def start_bot(proc):
+    if (len(envs.TOKEN) > 0):
+        discord_bot.start_bot(proc)

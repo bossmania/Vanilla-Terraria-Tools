@@ -2,9 +2,11 @@ import sys
 import envs
 import time
 import logger
+import asyncio
 import threading
 import subprocess
 import background_tasks
+from discord_bot import discord_bot
 
 #store the server binary location with args
 SERVER_CMD = sys.argv[1:]
@@ -24,26 +26,33 @@ def start_server():
         bufsize=1
     )
 
-    #read the server's input and output 
+    #start the server's background tasks
     threading.Thread(target=background_tasks.read_output, args=(proc,), daemon=True).start()
     threading.Thread(target=background_tasks.read_input, args=(proc,), daemon=True).start()
     threading.Thread(target=background_tasks.check_players, args=(proc,), daemon=True).start()
     threading.Thread(target=background_tasks.auto_backup_world, daemon=True).start()
     threading.Thread(target=background_tasks.check_storage, daemon=True).start()
     threading.Thread(target=background_tasks.flush_logs_timer, daemon=True).start()
+    threading.Thread(target=background_tasks.start_bot, args=(proc,), daemon=True).start()
 
     #wait for the process to finish and get the exit code
     code = proc.wait()
 
     #restart the server if it crash
-    if code != 0:
+    if code == 0:
         envs.RESTART = True
+
+    #stop the discord bot, if running one
+    if (len(envs.TOKEN) > 0):
+        asyncio.run_coroutine_threadsafe(discord_bot.bot.close(), discord_bot.bot.loop)
 
     #stop the threads
     envs.STOP_THREADS = True
-    
+
     #wait for all of the threads to stop
+    print ("Stoppping the server and all of the background tasks. Please wait a moment!")
     while len(envs.RUNNING_THREADS) > 0:
+        print(f"The {envs.RUNNING_THREADS} are still alive!")
         time.sleep(0.1)
 
 #run the server forever unless told not to
