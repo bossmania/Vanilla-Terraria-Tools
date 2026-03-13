@@ -35,6 +35,7 @@ def start_server():
     threading.Thread(target=background_tasks.check_storage, daemon=True).start()
     threading.Thread(target=background_tasks.flush_logs_timer, daemon=True).start()
     threading.Thread(target=background_tasks.start_bot, args=(proc,), daemon=True).start()
+    threading.Thread(target=background_tasks.get_player_count, daemon=True).start()
 
     #wait for the process to finish and get the exit code
     code = proc.wait()

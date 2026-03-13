@@ -13,6 +13,8 @@ RUNNING_THREADS = []
 #list of online players
 ONLINE = []
 
+#world status
+WORLD_LOADED = False
 CURRENTLY_SAVING = False
 
 #get the info from the .env file

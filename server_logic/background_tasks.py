@@ -4,9 +4,10 @@ import envs
 import time
 import shutil
 import logger
+import asyncio
 import output_controller
-from discord_bot import discord_bot
 from commands import world_controller
+from discord_bot import discord_bot, discord_bot_notify
 
 #func to read the user's input
 def read_input(proc):
@@ -150,3 +151,33 @@ def start_bot(proc):
     
         #create the discord bot
         envs.BOT.start_bot()
+
+def get_player_count():
+    #stop if the bot isnt being used
+    if len(envs.TOKEN) <= 0:
+        return
+
+    #add itself to the running thread list
+    envs.RUNNING_THREADS.append("get_player_count")
+
+    while True:
+        #check every 0.1 seconds for if the thread should die
+        for _ in range(envs.PLAYER_CHECK_FREQ * 10):
+            #remove itself from the list and stop running when told so
+            if envs.STOP_THREADS:
+                envs.RUNNING_THREADS.remove("get_player_count")
+                return
+
+            time.sleep(0.1)
+
+        #skip checking if the world isnt loaded yet
+        if not envs.WORLD_LOADED:
+            continue
+
+        #add in a little bit of a delay to ensure that the online player count has been updated first
+        time.sleep(0.2)
+
+        msg = f"{len(envs.ONLINE)} players online!"
+
+        #update the player count adn reset the update status timer
+        asyncio.run_coroutine_threadsafe(discord_bot_notify.bot_activity(msg), envs.BOT.bot.loop)

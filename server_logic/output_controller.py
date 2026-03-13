@@ -62,9 +62,14 @@ def check_if_saving(line):
         envs.CURRENTLY_SAVING = False
 
 def check_world_status(line):
-    #notify on discord that the server is up if it's using discord
-        if len(envs.TOKEN) > 0 and "Server started" in line:
-            asyncio.run_coroutine_threadsafe(discord_bot_notify.notify("The server has booted up!"), envs.BOT.bot.loop)
+        #set the world status to be laoded when the server is up
+        if "Server started" in line:
+            envs.WORLD_LOADED = True
+
+            #notify on discord that the server is up if it's using discord
+            if len(envs.TOKEN) > 0:
+                asyncio.run_coroutine_threadsafe(discord_bot_notify.notify("The server has booted up!"), envs.BOT.bot.loop)
+                asyncio.run_coroutine_threadsafe(discord_bot_notify.bot_activity("0 players online!"), envs.BOT.bot.loop)
 
 def check_user_permission(line):
     #get the user and prep the IP search
