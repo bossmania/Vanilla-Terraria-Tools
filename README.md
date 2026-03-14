@@ -10,13 +10,16 @@ This a Terraria vanilla server wrapper where it can add additional tools to help
 - Multiple [/ commands](#Commands) that can be executed from within game (See step 8 of [the setup](#Setup) in order to limit the commands to only approved IPs)
 - Ban griefers who are offline. 
 - auto backup the world every 15 mins (configurable).
+    - The timer freezes when no one is online to save spaces.
 - easy way to manually backup and restore the world .
 - Auto restart server if wasn't properly exited.
 - Monitor and control the server from a optional discord bot.
-	- *Almost* the [same commands set](#Discord_commands) as in game. 
+	- The [same commands set](#Discord_commands) as in game. 
 	- *Almost* live player count as the bot's status.
 	- Monitor the server's chat log in a dedicated channel.
 	- Notify when the server started, stopped, and restarted.
+ 	- Notify when the server has loaded the world.
+  	- Notify when the server is running out of storage (configurable).
 	
 ## Dependencies
 - A Linux server (this has been only tested on Linux using Ubuntu 24.04.4 LTS. Windows, Mac and other Linux distros might work, but your mileage may vary).
