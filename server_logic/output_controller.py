@@ -24,6 +24,9 @@ def control_output(line, proc):
     #function to check the world status
     check_world_status(line)
 
+    #notify when a player joins the world
+    player_notify(line)
+
 def organize_log_messages(line, stamped, proc):
     #log the player's IP
     if envs.IP_regex.search(line):
@@ -70,6 +73,18 @@ def check_world_status(line):
             if len(envs.TOKEN) > 0:
                 asyncio.run_coroutine_threadsafe(discord_bot_notify.notify("The server has booted up!"), envs.BOT.bot.loop)
                 asyncio.run_coroutine_threadsafe(discord_bot_notify.bot_activity("0 players online!"), envs.BOT.bot.loop)
+
+def player_notify(line):
+    #check if player joined/left, and can notify about it
+    notify = False
+    if "has joined" in line and envs.PLAYER_JOIN_NOTIFY: 
+        notify = True
+    if "has left" in line and envs.PLAYER_LEAVE_NOTIFY:
+        notify = True
+    
+    #notify about the player joining/leaving
+    if notify:
+        asyncio.run_coroutine_threadsafe(discord_bot_notify.notify(line), envs.BOT.bot.loop)
 
 def check_user_permission(line):
     #get the user and prep the IP search
