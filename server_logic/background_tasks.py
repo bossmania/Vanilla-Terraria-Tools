@@ -117,7 +117,7 @@ def auto_backup_world():
 
             #reset the backup timer
             BACKUP = False
-            BACKUP_TIMER_DURATION = 10
+            BACKUP_TIMER_DURATION = envs.BACKUP_TIMER
         else:
             #check if anyone's online before starting the backup timer
             if len(envs.ONLINE) > 0:
@@ -143,6 +143,10 @@ def check_storage():
             #get and send the message to the right place
             msg = f"The server's storage is at {percent_used}% used. Go delete some unused backups to make space."
             print(msg)
+
+            #notify on discord
+            if (envs.TOKEN) > 0:
+                asyncio.run_coroutine_threadsafe(discord_bot_notify.bot_activity(msg), envs.BOT.bot.loop)
 
 def start_bot(proc):
     #run the discord bot if a token was provided

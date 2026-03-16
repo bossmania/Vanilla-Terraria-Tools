@@ -58,7 +58,6 @@ def start_server():
     #wait for all of the threads to stop
     print (logger.timestamp("Stoppping the server and all of the background tasks. Please wait a moment!"))
     while len(envs.RUNNING_THREADS) > 0:
-        print(f"The {envs.RUNNING_THREADS} are still alive!")
         time.sleep(0.1)
 
 #run the server forever unless told not to
