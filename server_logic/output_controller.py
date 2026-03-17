@@ -83,7 +83,7 @@ def player_notify(line):
         notify = True
     
     #notify about the player joining/leaving
-    if notify:
+    if notify and len(envs.TOKEN) > 0:
         asyncio.run_coroutine_threadsafe(discord_bot_notify.notify(line), envs.BOT.bot.loop)
 
 def check_user_permission(line):
