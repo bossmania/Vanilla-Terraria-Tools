@@ -122,12 +122,14 @@ def auto_backup_world():
             #check if anyone's online before starting the backup timer
             if len(envs.ONLINE) > 0:
                 #decrease the backup timer by one second
-                time.sleep(1)
                 BACKUP_TIMER_DURATION -= 1
 
                 #start the backup when enough time has passed
                 if BACKUP_TIMER_DURATION <= 0:
                     BACKUP = True
+        
+        #sleep for a second
+        time.sleep(1)
 
 def check_storage():
     while True:
