@@ -41,10 +41,9 @@ def organize_log_messages(line, stamped, proc):
         if len(envs.TOKEN) > 0:
             asyncio.run_coroutine_threadsafe(discord_bot_notify.chat_log(line), envs.BOT.bot.loop)
 
-    #log everything else that isn't spam
+    #log the other stuff
     else:
-        if "No players connected." not in line and "Saving world data" not in line and "Validating world save" not in line and "player connected." not in line: 
-            logger.write_log(stamped, envs.OTHER_LOG)
+        logger.log_others(stamped)
 
 def get_online_players(line):
     #filter the line and check if it's valid 

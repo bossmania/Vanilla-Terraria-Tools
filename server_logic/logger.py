@@ -47,3 +47,20 @@ def player_in_log(person):
                 return True
 
         return False
+
+def log_others(line):
+    #create the list of things it's allowed to log about
+    ALLOW_LOGS = [
+        "Error Logging Enabled.",
+        "Listening on port",
+        "Server started",
+        "is connecting...",
+        "has joined.",
+        "has left."
+    ]
+
+    #only log this line if it's in the list
+    for allowed in ALLOW_LOGS:
+        if allowed in line:
+            write_log(line, envs.OTHER_LOG)
+            break
