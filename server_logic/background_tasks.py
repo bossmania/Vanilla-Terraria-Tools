@@ -11,29 +11,14 @@ from discord_bot import discord_bot, discord_bot_notify
 
 #func to read the user's input
 def read_input(proc):
-    #add itself to the threads list
-    envs.RUNNING_THREADS.append("read_input")
-
-    # dont wait for a stdin input
-    os.set_blocking(sys.stdin.fileno(), False)
-    
-    #infinite loop
-    while True:
+    for line in sys.stdin:
+        #try block to hide the nasty error when it fails to write to the pipe after a reboot (works fine after that)
         try:
-            #stop when told so
-            if envs.STOP_THREADS:
-                envs.RUNNING_THREADS.remove("read_input")
-                return
-
-            #get the line and send it to the proc
-            line = sys.stdin.readline()
-            if line:
-                proc.stdin.write(line)
-                proc.stdin.flush()
-        
-        #theres no data yet, so try again
-        except BlockingIOError:
-            time.sleep(0.05)
+            # write to the pipe
+            proc.stdin.write(line)
+            proc.stdin.flush()
+        except BrokenPipeError:
+            print(logger.timestamp("Something went wrong. Please try that again."))
 
 #func to read the user's output
 def read_output(proc):
