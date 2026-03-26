@@ -2,15 +2,25 @@ import sys
 import envs
 import time
 import logger
+import signal
 import asyncio
 import threading
 import subprocess
 import background_tasks
+from functools import partial
+from commands import server_commands
 from discord_bot import discord_bot_notify
 
 #store the server binary location with args
 SERVER_CMD = sys.argv[1:]
 
+def graceful_shutdown(proc, signum, frame):
+    #say that it got the signal
+    logger.write_log(logger.timestamp(f"Received a signal of {signum}, shutting down the server now!"))
+    
+    #save and exit the world
+    server_commands.exit(proc)
+    
 def start_server():
     #reset the values
     envs.RESTART = False
@@ -36,6 +46,10 @@ def start_server():
     threading.Thread(target=background_tasks.flush_logs_timer, daemon=True).start()
     threading.Thread(target=background_tasks.start_bot, args=(proc,), daemon=True).start()
     threading.Thread(target=background_tasks.get_player_count, daemon=True).start()
+
+    # create a pertial function with the proc for the SIGTERM signal handler
+    graceful_shutdown_proc = partial(graceful_shutdown, proc)
+    signal.signal(signal.SIGTERM, graceful_shutdown_proc)
 
     #wait for the process to finish and get the exit code
     code = proc.wait()
