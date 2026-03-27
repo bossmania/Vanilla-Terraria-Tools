@@ -16,7 +16,7 @@ SERVER_CMD = sys.argv[1:]
 
 def graceful_shutdown(proc, signum, frame):
     #say that it got the signal
-    logger.write_log(logger.timestamp(f"Received a signal of {signum}, shutting down the server now!"))
+    logger.write_log(logger.timestamp(f"Received a signal of {signum}, shutting down the server now!"), envs.OTHER_LOG)
     
     #save and exit the world
     server_commands.exit(proc)
@@ -55,7 +55,7 @@ def start_server():
     code = proc.wait()
 
     #restart the server if it crash
-    if code != 0:
+    if code != 0 and code != -15:
         envs.RESTART = True
 
     #notify of a server restart on discord, if using it
