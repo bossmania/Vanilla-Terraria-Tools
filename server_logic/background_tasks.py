@@ -30,26 +30,6 @@ def read_output(proc):
         #control what happens based on the output
         output_controller.control_output(line, proc)
 
-
-#check the amount of players every few seconds and clear the online list
-def check_players(proc):
-    #add itself to the running thread list
-    envs.RUNNING_THREADS.append("check_players")
-    while True:
-        #check every 0.1 seconds for if the thread should die
-        for _ in range(envs.PLAYER_CHECK_FREQ * 10):
-            #remove itself from the list and stop running when told so
-            if envs.STOP_THREADS:
-                envs.RUNNING_THREADS.remove("check_players")
-                return
-
-            time.sleep(0.1)
-
-        #get the player list and reset the online queue
-        proc.stdin.write("playing\n")
-        proc.stdin.flush()
-        envs.ONLINE = []
-
 def flush_logs():
     envs.PLAYER_LOG.flush()
     envs.CHAT_LOG.flush()

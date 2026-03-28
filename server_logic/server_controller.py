@@ -40,7 +40,6 @@ def start_server():
     #start the server's background tasks
     threading.Thread(target=background_tasks.read_output, args=(proc,), daemon=True).start()
     threading.Thread(target=background_tasks.read_input, args=(proc,), daemon=True).start()
-    threading.Thread(target=background_tasks.check_players, args=(proc,), daemon=True).start()
     threading.Thread(target=background_tasks.auto_backup_world, daemon=True).start()
     threading.Thread(target=background_tasks.check_storage, daemon=True).start()
     threading.Thread(target=background_tasks.flush_logs_timer, daemon=True).start()

@@ -15,17 +15,14 @@ def control_output(line, proc):
     #check if the output was a command
     command_checker(line, proc)
 
-    #get the list of online players
-    get_online_players(line)
+    #get the online online players
+    get_online_players(line, proc)
 
     #check if the world is currently saving
     check_if_saving(line)
 
     #function to check the world status
     check_world_status(line)
-
-    #notify when a player joins the world
-    player_notify(line)
 
 def organize_log_messages(line, stamped, proc):
     #log the player's IP
@@ -45,18 +42,6 @@ def organize_log_messages(line, stamped, proc):
     else:
         logger.log_others(stamped)
 
-def get_online_players(line):
-    #filter the line and check if it's valid 
-    result = envs.user_IP_regex.search(line)
-    if not result:
-        return None
-
-    #get the username
-    username, _ = result.groups()
-
-    #add the username to the online list
-    envs.ONLINE.append(username)
-
 #func to check if the world is currently saving
 def check_if_saving(line):
     if "Saving world data:" in line:
@@ -74,14 +59,33 @@ def check_world_status(line):
                 asyncio.run_coroutine_threadsafe(discord_bot_notify.notify("The server has booted up!"), envs.BOT.bot.loop)
                 asyncio.run_coroutine_threadsafe(discord_bot_notify.bot_activity("0 players online!"), envs.BOT.bot.loop)
 
-def player_notify(line):
-    #check if player joined/left, and can notify about it
+def get_online_players(line, proc):
+    #notify joining on discord?
     notify = False
-    if "has joined" in line and envs.PLAYER_JOIN_NOTIFY: 
-        notify = True
-    if "has left" in line and envs.PLAYER_LEAVE_NOTIFY:
-        notify = True
-    
+
+    #check if the player has joined
+    if "has joined" in line:
+        #add them to the online player list
+        username = line.split(" has joined")[0]
+        envs.ONLINE.append(username)
+
+        #get the their IP for the playing list
+        proc.stdin.write(f"playing\n")
+
+        #check if it should notify
+        if envs.PLAYER_JOIN_NOTIFY: 
+          notify = True
+
+    #check if the player has lefted
+    elif "has left" in line:
+        #check if the player has left
+        username = line.split(" has left")[0]
+        envs.ONLINE.remove(username)
+
+        #check if it should notify
+        if envs.PLAYER_JOIN_NOTIFY: 
+            notify = True
+
     #notify about the player joining/leaving
     if notify and len(envs.TOKEN) > 0:
         asyncio.run_coroutine_threadsafe(discord_bot_notify.notify(line), envs.BOT.bot.loop)
